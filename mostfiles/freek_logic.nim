@@ -1,6 +1,6 @@
 import std/[random]
 import strutils
-import g_mine
+import g_mine, g_templates
 
 
 #[ say something ]#
@@ -72,9 +72,10 @@ proc getContentList*(link_or_tekst, startpartst, endpartst: string,
 
 
 
+
 when isMainModule:
   #echo genTabId()
   var linkst = "https://www.bibliotecapleyades.net/vida_alien/xenology/papers_xeno/galacticempires.htm"
   echo "********"
   #echo getTagContent_old(linkst, "<font size", "</font>", 100)
-  echo getContentList(linkst, "990012", "</font>", docHtml, 100)
+  #echo getContentList(linkst, "990012", "</font>", docHtml, 100)

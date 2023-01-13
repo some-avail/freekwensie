@@ -30,14 +30,14 @@ function finalize(){
 
 function sendFunctionToServer() {
   setCookieForSeconds("datajson_run_function", 
-    "funcname::g_tools.dummyPass++location::inner++mousvarname::statustext++newcontent::nieuwe statustekst", 300);
+    "funcname::g_cookie.dummyPass++location::inner++mousvarname::statustext++newcontent::nieuwe statustekst", 300);
   finalize();
 }
 
 
 function setMoustachuVar(mousvarjs, contentjs) {
   setCookieForSeconds("datajson_run_function", 
-    "funcname::g_tools.dummyPass++location::inner++mousvarname::" + mousvarjs + 
+    "funcname::g_cookie.dummyPass++location::inner++mousvarname::" + mousvarjs + 
     "++newcontent::" + contentjs, 
     300);
   

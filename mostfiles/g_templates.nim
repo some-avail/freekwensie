@@ -49,6 +49,7 @@ template timeNeatly(statement: untyped): float =
 
 
 template  timeCop*(statement: untyped) = 
+  # measures real-time instead of cpu-time
   let t0 = now()
   statement
   let t1 = now()

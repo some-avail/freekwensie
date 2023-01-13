@@ -20,8 +20,10 @@ file. When you only read from the files no-problemo but if you write you
 might get problems because of the shared data corruption; that is different 
 threads writing and expecting different data.
 See also the module freek_loadjson.nim
-Currently --threads :on compiles and runs succesfully depending on the chosen 
-persistence-mode in freek_loadjson.nim. See that module for further info.
+Currently --threads :on does NOT compile (by design) for the app is 
+at this moment meant as a single-user-app. Their is howuever full data-
+separation between users and tabs.
+
 
 
 ADAP HIS
@@ -37,10 +39,9 @@ import strutils
 import nimclipboard/libclipboard
 import freek_loadjson, freek_logic
 import g_database, g_templates,  g_db2json, g_json_plus
-import g_mine, g_options
-#from freek_loadjson import nil
+import g_mine, g_options, g_cookie, g_tools
 from g_html_json import nil
-from g_tools import nil
+
 
 
 
@@ -155,6 +156,9 @@ routes:
       tabidst, resultst, freqlist, sitest, parent_titlest, child_titlest, innertekst, reversest: string
       extra_list, button_nekst, button_prevst, nav_noticest: string
       linkcountit, setsizeit, setcountit, itemstartit, itemendit, getchildscountit: int
+      excludesubsq: seq[string]
+      # skip-list created from file:
+      skiplisq: seq[string] = convertFileToSequence("fq_noise_word.dat", ">>>")
       # options:
       fqwordlenghit = parseInt(readOptionFromFile("freq-word-length", optValue))
       fqlistlengthit = parseInt(readOptionFromFile("freq-list-length", optValue))
@@ -249,9 +253,10 @@ routes:
     if @"curaction" == "retrieving..":
       sitest = getWebSite(@"pasted_link")
       parent_titlest = getTitleFromWebsite2(@"pasted_link")
-      outervarob["pagetitle"] = appnamebriefst & "_LNX_" & parent_titlest & "  -- " & appnamenormalst      
+      outervarob["pagetitle"] = appnamebriefst & "_LNX_" & parent_titlest & "  -- " & appnamenormalst
+      excludesubsq = getValList(readOptionFromFile("subs-not-in-childlinks", optValueList))
       if sitest != "":
-        getchildscountit = getChildLinks(@"pasted_link", parseint(@"sel_parsing_depth"), 1, 1, datasqta[tabidst])
+        getchildscountit = getChildLinks(@"pasted_link", parseint(@"sel_parsing_depth"), 1, 1,excludesubsq ,datasqta[tabidst])
         if @"chkshow_preresults" == "chkshow_preresults":
           resultst = "<table id=\"weblinks_table\">\p"
           for item in datasqta[tabidst]:
@@ -289,7 +294,7 @@ routes:
           innertekst = getInnerText2(sitest)
           child_titlest = getTitleFromWebsite2(item[2])
           if sitest != "":
-            freqlist = calcWordFrequencies(innertekst, fqwordlenghit, true, fqlistlengthit)
+            freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit)
             resultst &= "<table>\p"
             resultst &= "<tr>\p"
             resultst &= "<td id=\"first_row_prof_table\" colspan=\"2\">" & child_titlest & "<br>" & item[3] & "</td>\p"
@@ -340,14 +345,14 @@ routes:
     if request.cookies.haskey(project_prefikst & "_run_function"):
       cookievaluest = request.cookies[project_prefikst & "_run_function"]
       if cookievaluest != "DISABLED":
-        funcpartsta = g_tools.getFuncParts(cookievaluest) 
+        funcpartsta = getFuncParts(cookievaluest) 
         locationst = funcpartsta["location"]  # innerhtml-page or outerhtml-page
         mousvarnamest = funcpartsta["mousvarname"]
 
         if locationst == "inner":
-          innervarob[mousvarnamest] = g_tools.runFunctionFromClient(funcpartsta, gui_jnob)
+          innervarob[mousvarnamest] = runFunctionFromClient(funcpartsta, gui_jnob)
         elif locationst == "outer":
-          outervarob[mousvarnamest] = g_tools.runFunctionFromClient(funcpartsta, gui_jnob)
+          outervarob[mousvarnamest] = runFunctionFromClient(funcpartsta, gui_jnob)
 
     when persisttype != persistNot:
       writeStoredNode(tabidst, gui_jnob)
@@ -618,14 +623,14 @@ routes:
     if request.cookies.haskey(project_prefikst & "_run_function"):
       cookievaluest = request.cookies[project_prefikst & "_run_function"]
       if cookievaluest != "DISABLED":
-        funcpartsta = g_tools.getFuncParts(cookievaluest) 
+        funcpartsta = getFuncParts(cookievaluest) 
         locationst = funcpartsta["location"]  # innerhtml-page or outerhtml-page
         mousvarnamest = funcpartsta["mousvarname"]
 
         if locationst == "inner":
-          innervarob[mousvarnamest] = g_tools.runFunctionFromClient(funcpartsta, gui_jnob)
+          innervarob[mousvarnamest] = runFunctionFromClient(funcpartsta, gui_jnob)
         elif locationst == "outer":
-          outervarob[mousvarnamest] = g_tools.runFunctionFromClient(funcpartsta, gui_jnob)
+          outervarob[mousvarnamest] = runFunctionFromClient(funcpartsta, gui_jnob)
 
     when persisttype != persistNot:
       writeStoredNode(tabidst, gui_jnob)

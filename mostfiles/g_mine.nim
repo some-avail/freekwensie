@@ -466,7 +466,7 @@ proc getInnerText2*(tekst: string, maxitemcountit: int = -1): string =
 
 
 
-proc calcWordFrequencies*(input_tekst:string, wordlengthit:int,
+proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string], 
                     useHtmlBreaksbo:bool, topcountit: int = 10000):string = 
   #[ 
   Create a list of word-frequencies in html (useHtmlBreaksbo = true) or normal text.
@@ -475,13 +475,9 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int,
    ]#
 
   var
-    skiplistsq, wordsq, allwordssq: seq[string]
+    wordsq, allwordssq: seq[string]
     output_tekst:string
     indexit: int = 0
-
-  skiplistsq = @["through", "Through", "between", "because", "various", "against", 
-                  "important", "something", "another", "themselves", "currently",
-                  "particular", "possible", "without", "several", "certain"]
 
 
   wordsq = input_tekst.split(" ")
@@ -623,13 +619,16 @@ proc getTitleFromWebsite2*(webaddresst:string): string =
 
 
 proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: int, 
-                      weblinksq: var seq[array[5, string]]): int = 
+            excludesubstringsq:seq[string]= @[], weblinksq: var seq[array[5, string]]): int = 
   #[ 
   Get all the weblinks of the page parentweblinkst and put them in the var 
-  weblinksq of the form @[[parentlink, curdepth, childlink, childtitle]]
+  weblinksq of the form @[[parentlink, curdepth, childlink, childtitle, indexnr]]
   The var weblinksq must be externally created before being called.
   The proc is recurrent and maxdepthit determines the maximal parsing-depth.
-  Depth is one-based.
+  MaxDepth 0 means only retrieve the parent, Maxdepth 1 means the (first order) children.
+  Call with curdepth = 1
+
+  Fields of weblinksq:
   link1, depth, link2, title2, indexnr
   ADAP HIS:
   ADAP FUT:
@@ -641,10 +640,8 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
     datasq, frag_onesq, frag_twosq, attribsq: seq[string]
     link_onest, link_twost, templinkst, titlest, parent_titlest: string
     linkcountit, subcountit: int
-    not_in_childlinksq: seq[string]
 
 
-  not_in_childlinksq = getValList(readOptionFromFile("subs-not-in-childlinks", optValueList))
   datasq = getDataSeqClean(sitest, "<a ", "</a>")
 
   # if the website is mal-formed get the data dirtyly..
@@ -678,7 +675,7 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
           templinkst = attribsq[1].strip(chars = {'"'})
           link_twost = convertWebLinksToAbsolute(templinkst, parentweblinkst)
 
-      if not substringsInString(link_twost, not_in_childlinksq):
+      if not substringsInString(link_twost, excludesubstringsq):
         if not linkIsPresent(link_twost, weblinksq):
           weblinksq.add([link_onest, $curdepthit, link_twost, titlest, $linkcountit])
           linkcountit += 1
@@ -687,7 +684,8 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
       # call recurrently
       try:
         if curdepthit < maxdepthit:
-          linkcountit = getChildLinks(link_twost, maxdepthit, curdepthit + 1, linkcountit, weblinksq)
+          linkcountit = getChildLinks(link_twost, maxdepthit, curdepthit + 1, linkcountit, 
+                                          excludesubstringsq, weblinksq)
 
       except:
         let errob = getCurrentException()
