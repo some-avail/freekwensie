@@ -123,7 +123,7 @@ routes:
     outervarob["namenormal"] = appnamenormalst
     outervarob["namelong"] = appnamelongst
     outervarob["namesuffix"] = appnamesuffikst
-    outervarob["pagetitle"] = appnamelongst & appnamesuffikst   
+    outervarob["pagetitle"] = appnamenormalst & " _ " & appnamelongst & appnamesuffikst   
     outervarob["project_prefix"] = project_prefikst
 
     innervarob["project_prefix"] = project_prefikst  
