@@ -413,7 +413,23 @@ proc multiplyString(stringst: string, timesit: int): string =
 
 
 
+proc removeSingleStrings(tekst: string, removablesq: seq[string]): string =
+
+  var 
+    vtekst: string
+  vtekst = tekst
+
+  for subst in removablesq:
+    vtekst = vtekst.replace(subst, "")
+
+  result = vtekst
+
+
 proc removeDuplicateStrings(tekst: string, removablesq: seq[string]): string =
+#[ 
+&nbsp;
+ ]#
+
   var
     vtekst, foursubst, threesubst, twosubst, nsubst, msubst: string
 
@@ -460,6 +476,7 @@ proc getInnerText2*(tekst: string, maxitemcountit: int = -1): string =
         newtekst &= elem
       itemcountit += 1
 
+  newtekst = removeSingleStrings(newtekst, @["&nbsp;", "&nbsp"])
   newtekst = removeDuplicateStrings(newtekst, @[" ", "\n", "\t","\c", "\c\n" ,"\n ", "\t\n", "\t\c", "\t \n"])
 
   result = newtekst
@@ -476,15 +493,16 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
 
   var
     wordsq, allwordssq: seq[string]
-    output_tekst:string
+    output_tekst, tempst:string
     indexit: int = 0
 
 
   wordsq = input_tekst.split(" ")
   for wordst in wordsq:
-    if len(wordst) >= wordlengthit:
-      if not (wordst in skiplistsq):
-        allwordssq.add(wordst)
+    tempst = removeSingleStrings(wordst, @[" ", "\p", "\t", "\c"])
+    if len(tempst) >= wordlengthit:
+      if not (tempst in skiplistsq):
+        allwordssq.add(tempst)
 
 
   # echo allwordssq
@@ -505,6 +523,8 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
     indexit += 1
 
   result = output_tekst
+
+
 
 
 
@@ -575,7 +595,7 @@ proc getDataSequence*(link_or_tekst, starttagst, endtagst:string): seq[string] =
 
   # if the website is mal-formed get the data dirtyly..
   if datasq == @[]:
-    echo "Non-xml acquisition.."
+    #echo "Non-xml acquisition.."
     datasq = getDataSeqDirty(tekst, starttagst, endtagst)
 
   result = datasq
@@ -646,9 +666,10 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
 
   # if the website is mal-formed get the data dirtyly..
   if datasq == @[]:
-    echo "Non-xml acquisition.."
+    #echo "Non-xml acquisition.."
     datasq = getDataSeqDirty(sitest, "<a ", "</a>")
 
+  echo linknumit
 
  #[ 
   # future-approach? Then can also get weblink directly
@@ -848,20 +869,24 @@ when isMainModule:
  echo getBaseFromWebAddress2("http://www.x.nl/a/b/c/blah.html", true)
  ]#
 
-#[
+
+#[ ]# 
   # TEST: getInnerText2 or calcWordFrequencies or countWords
   var 
-    sitest = getWebSite("https://en.wikipedia.org/wiki/Well-formed_element")
+    sitest = getWebSite("https://www.bibliotecapleyades.net/sumer_anunnaki/esp_sumer_annunaki11.htm")
     #sitest = getWebSite("https://www.bibliotecapleyades.net/atlantida_mu/esp_lemuria_11.htm")
     #sitest = getWebSite("https://www.nrc.nl/nieuws/2022/12/26/oostenrijk-het-russische-vliegdekschip-in-europa-a4152600")
 
   echo "-------------"
-  sitest = "bla>eerste<blubla>tweede<prrrrr>derde<hophop"
-  echo getInnerText2(sitest, 1)
-  #echo calcWordFrequencies(getInnerText2(sitest), 7, false, 20)
+  #sitest = "bla>eerste<blubla>tweede<prrrrr>derde<hophop"
+  #echo getInnerText2(sitest, 1)
+  echo calcWordFrequencies(getInnerText2(sitest), 7, @["pietje", "jantje"], false, 20)
   #echo countWords(getInnerText2(sitest))
-  ]# 
-
+  
+#[ 
+calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string], 
+                    useHtmlBreaksbo:bool, topcountit: int = 10000)
+ ]#
 
  #echo multiplyString("m", 3)
 
@@ -877,5 +902,5 @@ when isMainModule:
   #echo getTitleFromWebsite2("https://nl.wikipedia.org/wiki/Nim_(spel)")
 
   #echo getHtmlHeaders("https://en.wikipedia.org/wiki/Well-formed_element")
-  echo getHtmlHeaders("https://nl.wikipedia.org/wiki/1961", docText, 1000)
+  #echo getHtmlHeaders("https://nl.wikipedia.org/wiki/1961", docText, 1000)
 

@@ -46,7 +46,7 @@ from g_html_json import nil
 
 
 const 
-  versionfl:float = 0.7
+  versionfl:float = 0.71
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -73,7 +73,8 @@ var datasqta = initTable[string, seq[array[5, string]]]()
 
 
 settings:
-  port = Port(portnumberit)
+  port = Port(parseInt(readOptionFromFile("port-number", optValue)))
+  #port = Port(portnumberit)
 
 
 
