@@ -1,6 +1,6 @@
 ## Freekwensie
 
-![screenshot_01.png](pictures/screenshot_01.png)
+![screenshot_01.png](mostfiles/pictures/screenshot_01.png)
 
 [See below for more screenshots](#more-screenshots)
 
@@ -70,4 +70,4 @@ http://localhost:5050/flashread-form
 
 
 <a name="more-screenshots">More screenshots:</a>
-![screenshot_03.png](pictures/screenshot_03.png)
+![screenshot_03.png](mostfiles/pictures/screenshot_03.png)
