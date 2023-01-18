@@ -526,49 +526,28 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
 
 
 
+proc calcCumulFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string],
+                              globwordsq: var seq[string]) = 
 
-
-proc calcWordFrequencies_Old*(input_tekst:string, wordlengthit:int,
-                    useHtmlBreaksbo:bool, topcountit: int = 10000):string = 
   #[ 
-  Create a list of word-frequencies in html (useHtmlBreaksbo = true) or normal text.
+  Possible future addition to add cumulative freqs.
+  I may also abort this path and implement the cumulatives thru the planned later 
+  database-implementation.
   Only add words with a length > wordlenghit
-  Limit the list-length to topcountit (like top 10)
    ]#
 
   var
-    sentencesq, wordsq, allwordssq: seq[string]
-    output_tekst:string
-    indexit: int = 0
+    wordsq: seq[string]
+    output_tekst, tempst:string
 
-  
-  sentencesq = splitlines(input_tekst)
-  # echo sentencesq
-  # echo "\p"
-  for sentencest in sentencesq:
-    wordsq = sentencest.split(" ")
-    for wordst in wordsq:
-      if len(wordst) >= wordlengthit:
-        allwordssq.add(wordst)
 
-  # echo allwordssq
-  # echo "\p"
-  var wordcountta = toCountTable(allwordssq)
-  wordcountta.sort()
-  # echo wordcountta
-  # echo "\p"
+  wordsq = input_tekst.split(" ")
+  for wordst in wordsq:
+    tempst = removeSingleStrings(wordst, @[" ", "\p", "\t", "\c"])
+    if len(tempst) >= wordlengthit:
+      if not (tempst in skiplistsq):
+        globwordsq.add(tempst)
 
-  for k, v in wordcountta.pairs:
-    if indexit < topcountit:
-      if useHtmlBreaksbo:
-        output_tekst &= k & " - " & $v & "<br>"
-      else:
-        output_tekst &= k & " - " & $v & "\p"
-    else:
-      break
-    indexit += 1
-
-  result = output_tekst
 
 
 proc getDataSequence*(link_or_tekst, starttagst, endtagst:string): seq[string] = 
@@ -818,9 +797,9 @@ proc getHtmlHeaders*(link_or_tekst: string, output_doc: DocType,
               if contentst.len > 0:
 
                 if output_doc == docHtml:
-                  list &= multiplyString("&nbsp", 2*(it - 1)) & contentst & "<br>\p"
+                  list &= multiplyString("&nbsp", 3*(it - 1)) & contentst & "<br>\p"
                 elif output_doc == docText:
-                  list &= multiplyString(" ", 2*(it - 1)) & contentst & "\p"                
+                  list &= multiplyString(" ", 3*(it - 1)) & contentst & "\p"                
 
             itemcountit += 1
 

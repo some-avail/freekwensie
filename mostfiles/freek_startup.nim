@@ -46,7 +46,7 @@ from g_html_json import nil
 
 
 const 
-  versionfl:float = 0.71
+  versionfl:float = 0.72
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -316,7 +316,6 @@ routes:
             resultst &= "<td colspan=\"2\">" & getIntroText(innertekst, 600) & "</td>\p"
             resultst &= "</tr>\p"
 
-
             resultst &= "<tr>\p"
             resultst &= "<td>Depth = " & item[1] & 
                         "<br>Word-count = " & $countWords(innertekst) & "</td>\p"
@@ -325,7 +324,8 @@ routes:
             resultst &= "</tr>\p"
 
             resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"2\">" & item[0] & "</td>\p"
+            resultst &= "<td>" & item[4] & "</td>\p"
+            resultst &= "<td>" & item[0] & "</td>\p"
             resultst &= "</tr>\p"
 
             resultst &= "</table><br><br>\p"
