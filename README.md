@@ -4,7 +4,7 @@
 
 [See below for more screenshots](#more-screenshots)
 
-[Go to downloadable releases for windows and linux](https://github.com/some-avail/freekwensie/releases "Downloads for Freekwensie)
+[Go to downloadable releases for windows and linux](https://github.com/some-avail/freekwensie/releases "Downloads for Freekwensie")
 
 FKW is a website-profiler that uses (aot) word-frequencies to get an idea of the content of the website, without the need of opening / entering it. FKW can profile all child-links of a parent-website, or even deeper. 
 
