@@ -470,7 +470,6 @@ proc getInnerText2*(tekst: string, maxitemcountit: int = -1): string =
 
   # filter and concatenate elems
   for elem in datasq:
-
     if not ('{' in elem):   # filter out script
       if itemcountit <= maxitemcountit or maxitemcountit == -1:
         newtekst &= elem

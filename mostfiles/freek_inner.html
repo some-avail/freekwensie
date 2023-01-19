@@ -12,8 +12,11 @@
       <textarea name="curaction" readonly class="specialfield">idle</textarea>
       <label>Status: &nbsp&nbsp&nbsp</label><label>{{{statustext}}}</label><br><br>
 
-      <button class="mybuttons" type="button" onclick="butPasteLink()">Paste link / path</button>
+      <button class="mybuttons" type="button" id="button_paste" onclick="butPasteLink()">Paste link / path</button>
           <textarea name="pasted_link" id="pasted_link" onchange="pasted_link_onchange()">{{{pasted_text}}}</textarea><br>
+          <label id="labelseek">Seek:</label>
+          <textarea name="seekbox" id="seekbox" onchange="seekbox_onchange()">{{{seekbox}}}</textarea><br>
+
 
       <button class="mybuttons" type="button" onclick="butGetChildLinks()">Retrieve child-links</button>    {{{sel_depth}}}&nbsp&nbsp&nbsp&nbsp&nbsp{{{check_show}}}
       <button class="mybuttons" type="button" onclick="butProfile()">Start profiling</button>

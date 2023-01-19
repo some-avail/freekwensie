@@ -71,11 +71,17 @@ proc getContentList*(link_or_tekst, startpartst, endpartst: string,
                         output_doc, maxlineit)
 
 
+proc createSearchString*(inputst: string): string =
+  result = inputst.splitWhitespace().join("+")
+
 
 
 when isMainModule:
   #echo genTabId()
-  var linkst = "https://www.bibliotecapleyades.net/vida_alien/xenology/papers_xeno/galacticempires.htm"
+  #var linkst = "https://www.bibliotecapleyades.net/vida_alien/xenology/papers_xeno/galacticempires.htm"
   echo "********"
   #echo getTagContent_old(linkst, "<font size", "</font>", 100)
   #echo getContentList(linkst, "990012", "</font>", docHtml, 100)
+  var st: string = "  aap noot  mies"
+  echo createSearchString(st)
+

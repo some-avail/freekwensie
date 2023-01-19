@@ -12,6 +12,14 @@ function setCookieForSeconds(cName, cValue, forSeconds) {
 }
 
 
+function waitMilSecs(milsecsji) {
+
+  // wait some milliseconds for the function to be executed depending on latency
+  let now = Date.now(),
+      end = now + milsecsji;
+  while (now < end) { now = Date.now(); }
+}
+
 
 function finalize(){
   const waitmilsecsji = 200
@@ -89,15 +97,26 @@ function All_tables_onchange() {
 
 function butPasteLink() {
   document.getElementsByName("curaction")[0].value = "pasting..";
+  document.getElementById("seekbox").value = "";
   document.forms["webbieform"].submit();  
+  // document.getElementById("seekbox").focus();
 }
-
 
 
 function pasted_link_onchange() {
   document.getElementsByName("curaction")[0].value = "changing link..";
   document.forms["webbieform"].submit();    
+  // document.getElementById("seekbox").focus();  
 }
+
+
+function seekbox_onchange() {
+  document.getElementsByName("curaction")[0].value = "entering terms..";
+  document.forms["webbieform"].submit();
+  // document.getElementById("button_paste").focus();
+
+}
+
 
 
 function butGetChildLinks() {

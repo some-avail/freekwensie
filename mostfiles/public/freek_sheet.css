@@ -24,6 +24,10 @@ textarea {
   text-align: center;
 }
 
+#seekbox {
+  width: 300px;
+}
+
 textarea.txa_start_end{
   margin-left: 5px;
   width: 110px;
@@ -33,6 +37,12 @@ textarea.txa_start_end{
 #labelsetnr {
   margin-left: 20px;
 }
+
+#labelseek {
+  margin-left: 225px;
+  margin-right: 10px;
+}
+
 
 table, th, td {
   border: 1px solid black;

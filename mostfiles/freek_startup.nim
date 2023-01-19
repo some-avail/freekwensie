@@ -138,6 +138,8 @@ routes:
                                                     @["chkshow_preresults"])
     innervarob["set_nr"] = "1"
 
+    innervarob["pasted_text"] = readOptionFromFile("pastebox-default", optValue)
+
 
     resp showPage(innervarob, outervarob)
 
@@ -158,6 +160,7 @@ routes:
       extra_list, button_nekst, button_prevst, nav_noticest: string
       linkcountit, setsizeit, setcountit, itemstartit, itemendit, getchildscountit: int
       excludesubsq: seq[string]
+      weblinkst: string
       # skip-list created from file:
       skiplisq: seq[string] = convertFileToSequence("fq_noise_word.dat", ">>>")
       # options:
@@ -222,6 +225,7 @@ routes:
     innervarob["set_nr"] = @"set_nr"
     innervarob["startpart"] = @"custom_start"
     innervarob["endpart"] = @"custom_end"
+    innervarob["seekbox"] = @"seekbox"
 
 
     if @"curaction" == "pasting..":
@@ -234,7 +238,6 @@ routes:
       else:
         datasqta.add(tabidst, @[])
 
-      #datasq = @[]
       innervarob["statustext"] = "Pasting ready."
 
 
@@ -246,18 +249,30 @@ routes:
         datasqta[tabidst] = @[]
       else:
         datasqta.add(tabidst, @[])
-      #datasq = @[]
+
       innervarob["statustext"] = "Link changed and updated."
+
+
+    if @"curaction" == "entering terms..":
+      outervarob["pagetitle"] = appnamelongst & appnamesuffikst    
+      # reset the dataseq
+      if datasqta.hasKey(tabidst):
+        datasqta[tabidst] = @[]
+      else:
+        datasqta.add(tabidst, @[])
+
+      innervarob["statustext"] = "Search terms entered."
 
 
 
     if @"curaction" == "retrieving..":
-      sitest = getWebSite(@"pasted_link")
-      parent_titlest = getTitleFromWebsite2(@"pasted_link")
+      weblinkst = @"pasted_link" & createSearchString(@"seekbox")
+      sitest = getWebSite(weblinkst)
+      parent_titlest = getTitleFromWebsite2(weblinkst)
       outervarob["pagetitle"] = appnamebriefst & "_LNX_" & parent_titlest & "  -- " & appnamenormalst
       excludesubsq = getValList(readOptionFromFile("subs-not-in-childlinks", optValueList))
       if sitest != "":
-        getchildscountit = getChildLinks(@"pasted_link", parseint(@"sel_parsing_depth"), 1, 1,excludesubsq ,datasqta[tabidst])
+        getchildscountit = getChildLinks(weblinkst, parseint(@"sel_parsing_depth"), 1, 1,excludesubsq ,datasqta[tabidst])
         if @"chkshow_preresults" == "chkshow_preresults":
           resultst = "<table id=\"weblinks_table\">\p"
           for item in datasqta[tabidst]:
@@ -278,8 +293,9 @@ routes:
 
     if @"curaction" == "profiling..":
       button_nekst = "<button name=\"butNext\" class=\"but_prev_next\" type=\"button\" onclick=\"getNextSet()\">Next set</button>"
-      button_prevst = "<button name=\"butPrev\" class=\"but_prev_next\" type=\"button\" onclick=\"getPrevSet()\">Previous set</button>"      
-      parent_titlest = getTitleFromWebsite2(@"pasted_link")
+      button_prevst = "<button name=\"butPrev\" class=\"but_prev_next\" type=\"button\" onclick=\"getPrevSet()\">Previous set</button>"
+      weblinkst = @"pasted_link" & createSearchString(@"seekbox")      
+      parent_titlest = getTitleFromWebsite2(weblinkst)
       outervarob["pagetitle"] = appnamebriefst & "_" & parent_titlest & "  -- " & appnamenormalst
       linkcountit = 1
       setsizeit = parseint(@"sel_number_results")
@@ -295,6 +311,7 @@ routes:
           innertekst = getInnerText2(sitest)
           child_titlest = getTitleFromWebsite2(item[2])
           if sitest != "":
+            echo "Retrieving nr... " & $item[4]
             freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit)
             resultst &= "<table>\p"
             resultst &= "<tr>\p"
