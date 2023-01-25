@@ -17,6 +17,11 @@ type
     docHtml
     docText
 
+  AddressPart* = enum
+    addrBase
+    addrParent
+    addrGrandParent
+
 
 var debugbo: bool = false
 
@@ -233,6 +238,62 @@ proc getDataSeqDirty(tekst, starttagst, endtagst:string): seq[string] =
       break
     indexit += 1
   result = datasq
+
+
+proc getPartFromWebAddress(webaddresst: string, addresspart: AddressPart): string = 
+#[ 
+  Non-expanded base: http://www.x.nl/a/b/c/blah.html  becomes  http://www.x.nl
+  Expand to parent: http://www.x.nl/a/b/c/blah.html  becomes  http://www.x.nl/a/b/c
+  Expand to grandparent: http://www.x.nl/a/b/c/blah.html  becomes  http://www.x.nl/a/b
+ ]#
+
+  var 
+    addressq: seq[string]
+    basewebaddresst, parent_addresst: string
+    tbo: bool = false
+    countit: int = 0
+
+  # firstly chop the address up on the slashes
+  addressq = webaddresst.split("/")
+  # if tbo: echo addressq
+
+  if addressq.len >= 4:
+
+    case addresspart:
+    of addrBase:
+      # then restore it for the first 3 parts
+      for partst in addressq:
+        countit += 1
+        if countit < 4:
+          basewebaddresst &= partst & "/"
+      basewebaddresst = basewebaddresst[0 .. len(basewebaddresst) - 2]
+      result = basewebaddresst
+    of addrParent:
+      # then restore it for all but the last part
+      addressq.del(len(addressq) - 1)
+      for partst in addressq:
+        parent_addresst &= partst & "/"
+      parent_addresst = parent_addresst[0 .. len(parent_addresst) - 2]
+      result = parent_addresst
+    of addrGrandParent:
+      if addressq.len == 4:
+        # then restore it for the first 3 parts
+        for partst in addressq:
+          countit += 1
+          if countit < 4:
+            basewebaddresst &= partst & "/"
+        basewebaddresst = basewebaddresst[0 .. len(basewebaddresst) - 2]
+        result = basewebaddresst
+      else:
+        # then restore it for all but the last two parts
+        addressq.del(len(addressq) - 1)
+        addressq.del(len(addressq) - 1)
+        for partst in addressq:
+          parent_addresst &= partst & "/"
+        parent_addresst = parent_addresst[0 .. len(parent_addresst) - 2]
+        result = parent_addresst
+  else:
+    result = ""      
 
 
 
@@ -848,7 +909,7 @@ when isMainModule:
  ]#
 
 
-#[ ]# 
+#[ 
   # TEST: getInnerText2 or calcWordFrequencies or countWords
   var 
     sitest = getWebSite("https://www.bibliotecapleyades.net/sumer_anunnaki/esp_sumer_annunaki11.htm")
@@ -860,7 +921,8 @@ when isMainModule:
   #echo getInnerText2(sitest, 1)
   echo calcWordFrequencies(getInnerText2(sitest), 7, @["pietje", "jantje"], false, 20)
   #echo countWords(getInnerText2(sitest))
-  
+]#   
+
 #[ 
 calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string], 
                     useHtmlBreaksbo:bool, topcountit: int = 10000)
@@ -881,4 +943,8 @@ calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[strin
 
   #echo getHtmlHeaders("https://en.wikipedia.org/wiki/Well-formed_element")
   #echo getHtmlHeaders("https://nl.wikipedia.org/wiki/1961", docText, 1000)
+
+#[  ]#
+  var weblinkst: string = "https://en.wikipedia.org/wiki/extra/Well-formed_element"
+  echo getPartFromWebAddress(weblinkst, addrGrandParent)
 

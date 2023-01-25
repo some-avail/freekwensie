@@ -161,6 +161,7 @@ routes:
       linkcountit, setsizeit, setcountit, itemstartit, itemendit, getchildscountit: int
       excludesubsq: seq[string]
       weblinkst: string
+      seqcountit: int
       # skip-list created from file:
       skiplisq: seq[string] = convertFileToSequence("fq_noise_word.dat", ">>>")
       # options:
@@ -168,6 +169,8 @@ routes:
       fqlistlengthit = parseInt(readOptionFromFile("freq-list-length", optValue))
       maxcontentitemsit =  parseInt(readOptionFromFile("max-content-items", optValue))
       maxheaderitemsit =  parseInt(readOptionFromFile("max-header-items", optValue))
+      introtextsizit = parseInt(readOptionFromFile("intro-text-char-number", optValue))
+      targetwindowst = readOptionFromFile("target-window", optValue)
 
 
       #[ 
@@ -278,13 +281,19 @@ routes:
           for item in datasqta[tabidst]:
             resultst &= "<tr>\p"
             reversest = ""
+            seqcountit = 0
             for datum in item:
-              reversest = "<td>" & datum & "</td>\p" & reversest
+              if seqcountit == 2:
+                reversest = "<td><a href=\"" & datum & "\" target=\"" & targetwindowst & "\">" & datum & "</a></td>\p" & reversest
+              else:
+                reversest = "<td>" & datum & "</td>\p" & reversest
+              seqcountit += 1
             resultst &= reversest
             resultst &= "</tr>\p"
 
           resultst &= "</table>\p"
           innervarob["results_list"] = resultst
+
         innervarob["statustext"] = $len(datasqta[tabidst]) & " weblinks retrieved.."
       else:
         innervarob["statustext"] = "Could not acquire website.."
@@ -326,11 +335,11 @@ routes:
               resultst &= "<td id=\"extra_col_prof_table\" rowspan=\"5\">" & extra_list & "</td>\p"                
 
             resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"2\"><a href=\"" & item[2] & "\">" & item[2] & "</a></td>\p"
+            resultst &= "<td colspan=\"2\"><a href=\"" & item[2] & "\" target=\"" & targetwindowst & "\">" & item[2] & "</a></td>\p"
             resultst &= "</tr>\p"
 
             resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"2\">" & getIntroText(innertekst, 600) & "</td>\p"
+            resultst &= "<td colspan=\"2\">" & getIntroText(innertekst, introtextsizit) & "</td>\p"
             resultst &= "</tr>\p"
 
             resultst &= "<tr>\p"
