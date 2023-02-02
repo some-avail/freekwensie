@@ -46,13 +46,12 @@ from g_html_json import nil
 
 
 const 
-  versionfl:float = 0.72
+  versionfl:float = 0.73
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
   appnamelongst = "Website-profiler"
   appnamesuffikst = " using word-frequencies"
-  portnumberit = 5180
   # Make sure to get/show all elements that you are referring to, 
   # or crashes may occur
   showelems = g_html_json.showEntryFilterRadio
@@ -66,15 +65,14 @@ const
   - but provides no garbage-collection
  ]#
 
-var datasqta = initTable[string, seq[array[5, string]]]()
-
-
-#var datasq: seq[array[4, string]] = @[]
+var
+  datasqta = initTable[string, seq[array[5, string]]]()
+  globwordsqta = initTable[string, seq[string]]()
+  portnumberit: int = parseInt(readOptionFromFile("port-number", optValue))
 
 
 settings:
-  port = Port(parseInt(readOptionFromFile("port-number", optValue)))
-  #port = Port(portnumberit)
+  port = Port(portnumberit)
 
 
 
@@ -92,11 +90,9 @@ proc showPage(par_innervarob, par_outervarob: var Context,
 
 
 
-
   # sleep 1000
   # echo "hai"
   # echo $now()
-
 
 
 
@@ -135,11 +131,15 @@ routes:
                                                                   "10", 1)
 
     innervarob["check_show"] = g_html_json.setCheckBoxSet(initialjnob, "check_show_pre-results", 
-                                                    @["chkshow_preresults"])
+                                                    @["default"])
     innervarob["set_nr"] = "1"
 
     innervarob["pasted_text"] = readOptionFromFile("pastebox-default", optValue)
+    innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(initialjnob, "check_globfreqlist", 
+                                                        @["default"], true)
 
+    innervarob["sel_noise_words"] = g_html_json.setDropDown(initialjnob, "sel_noise_words", 
+                                              "noise_words_english_generic.dat", 5)
 
     resp showPage(innervarob, outervarob)
 
@@ -160,10 +160,11 @@ routes:
       extra_list, button_nekst, button_prevst, nav_noticest: string
       linkcountit, setsizeit, setcountit, itemstartit, itemendit, getchildscountit: int
       excludesubsq: seq[string]
-      weblinkst: string
+      weblinkst, globfreqtablest: string
       seqcountit: int
+      calcglobalfreqsbo: bool = false
       # skip-list created from file:
-      skiplisq: seq[string] = convertFileToSequence("fq_noise_word.dat", ">>>")
+      skiplisq: seq[string] = convertFileToSequence(@"sel_noise_words", ">>>")
       # options:
       fqwordlenghit = parseInt(readOptionFromFile("freq-word-length", optValue))
       fqlistlengthit = parseInt(readOptionFromFile("freq-list-length", optValue))
@@ -172,15 +173,6 @@ routes:
       introtextsizit = parseInt(readOptionFromFile("intro-text-char-number", optValue))
       targetwindowst = readOptionFromFile("target-window", optValue)
 
-
-      #[ 
-      recordsq: seq[Row] = @[]
-      id_fieldst, fieldnamest, id_valuest, id_typest, tabidst, filternamest, filtervaluest: string
-      colcountit, countit, addcountit: int
-      fieldtypesq, fieldvaluesq, filtersq: seq[array[2, string]] = @[]
-      filtervaluesq: seq[string] = @[]
-      tablechangedbo: bool = false
-      ]#
 
     # first version of html, css-sheet, script and json-file
     outervarob["sequence_nr"] = ""
@@ -229,41 +221,38 @@ routes:
     innervarob["startpart"] = @"custom_start"
     innervarob["endpart"] = @"custom_end"
     innervarob["seekbox"] = @"seekbox"
+    innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(gui_jnob, "check_globfreqlist", 
+                                                    @[@"chkCalcGlobFreqs"], true)
+
+
+    innervarob["sel_noise_words"] = g_html_json.setDropDown(gui_jnob, "sel_noise_words", 
+                                                              @"sel_noise_words", 5)
+
+
+
+    if @"curaction" in ["pasting..", "changing link..", "entering terms.."]:
+      # (re)set the dataseq which will hold the mined weblinks for the specific tabID
+      if datasqta.hasKey(tabidst):
+        datasqta[tabidst] = @[]
+      else:
+        datasqta.add(tabidst, @[])
+
+      # reset the global word-store (to create later global word-freqs)
+      if globwordsqta.hasKey(tabidst):
+        globwordsqta[tabidst] = @[]
+      else:
+        globwordsqta.add(tabidst, @[])
 
 
     if @"curaction" == "pasting..":
       outervarob["pagetitle"] = appnamelongst & appnamesuffikst    
       innervarob["pasted_text"] = $clipob.clipboard_text()
-      # reset the dataseq
-
-      if datasqta.hasKey(tabidst):
-        datasqta[tabidst] = @[]
-      else:
-        datasqta.add(tabidst, @[])
-
       innervarob["statustext"] = "Pasting ready."
 
-
-
     if @"curaction" == "changing link..":
-      outervarob["pagetitle"] = appnamelongst & appnamesuffikst    
-      # reset the dataseq
-      if datasqta.hasKey(tabidst):
-        datasqta[tabidst] = @[]
-      else:
-        datasqta.add(tabidst, @[])
-
       innervarob["statustext"] = "Link changed and updated."
 
-
     if @"curaction" == "entering terms..":
-      outervarob["pagetitle"] = appnamelongst & appnamesuffikst    
-      # reset the dataseq
-      if datasqta.hasKey(tabidst):
-        datasqta[tabidst] = @[]
-      else:
-        datasqta.add(tabidst, @[])
-
       innervarob["statustext"] = "Search terms entered."
 
 
@@ -301,6 +290,7 @@ routes:
 
 
     if @"curaction" == "profiling..":
+      if @"chkCalcGlobFreqs" == "chkCalcGlobFreqs": calcglobalfreqsbo = true
       button_nekst = "<button name=\"butNext\" class=\"but_prev_next\" type=\"button\" onclick=\"getNextSet()\">Next set</button>"
       button_prevst = "<button name=\"butPrev\" class=\"but_prev_next\" type=\"button\" onclick=\"getPrevSet()\">Previous set</button>"
       weblinkst = @"pasted_link" & createSearchString(@"seekbox")      
@@ -312,7 +302,6 @@ routes:
       itemstartit = (setcountit * setsizeit) + 1
       itemendit  = (setcountit + 1) * setsizeit
       nav_noticest = "<center>" & button_prevst & "Results from " & $itemstartit & " thru " & $itemendit & button_nekst & "</center><br><br>\p"
-      resultst = nav_noticest
 
       for item in datasqta[tabidst]:
         if linkcountit >= itemstartit and linkcountit <= itemendit:        
@@ -322,6 +311,7 @@ routes:
           if sitest != "":
             echo "Retrieving nr... " & $item[4]
             freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit)
+            if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, globwordsqta[tabidst])
             resultst &= "<table>\p"
             resultst &= "<tr>\p"
             resultst &= "<td id=\"first_row_prof_table\" colspan=\"2\">" & child_titlest & "<br>" & item[3] & "</td>\p"
@@ -358,7 +348,13 @@ routes:
 
         linkcountit += 1
 
-      resultst &= nav_noticest
+
+      if calcglobalfreqsbo:
+        globfreqtablest = createFreqTableFromWordList(globwordsqta[tabidst], 6, 20)
+        resultst = nav_noticest & globfreqtablest & resultst & nav_noticest
+      else:
+        resultst = nav_noticest & resultst & nav_noticest
+
       innervarob["results_list"] = resultst
       innervarob["statustext"] = "Results " & $itemstartit & " thru " & $itemendit & 
                           " shown of " & $len(datasqta[tabidst]) & " retrieved weblinks.."

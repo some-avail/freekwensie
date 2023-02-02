@@ -25,7 +25,7 @@ textarea {
 }
 
 #seekbox {
-  width: 300px;
+  width: 550px;
 }
 
 textarea.txa_start_end{
@@ -38,9 +38,13 @@ textarea.txa_start_end{
   margin-left: 20px;
 }
 
-#labelseek {
+#labelseek, #id_chkCalcGlobFreqs {
   margin-left: 225px;
   margin-right: 10px;
+}
+
+#labelexpert {
+  margin-left: 30px;
 }
 
 
@@ -133,6 +137,39 @@ select{
   font-size: 14px;
   /*overflow: hidden;*/
 }
+
+.row-controls {
+  background-color: beige;
+  padding: 0px;
+  margin: 0px;  
+}
+
+.col-left {
+  float: left;
+  width: 80%;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  /*height: 60%;*/
+  /*padding: 1.5%*/
+}
+
+
+.col-right {
+  float: right;
+  width: 15%;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  /*height: 60%;*/
+  /*padding: 1.5%*/
+}
+
+
+.results {
+  margin-top: 10px;
+}
+
 
 .specialfield {
   background-color: lightgrey;

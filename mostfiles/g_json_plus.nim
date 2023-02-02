@@ -181,7 +181,7 @@ proc graftJObjectToTree*(newkeyst: string, pathtomountpointsq: seq[string],
   #[ Add a new (orphan) jsonnode to an adoptive jsonnode, both of type JObject.
       Set the path to mountpoint (where to attach) via pathtomountpointsq. 
       The orphan-jnob must look like: {newkeyst: some-jsonnode, blabla}
-      The adoptive node must be preset outside/ before of the procedure.
+      The adoptive node must be preset outside of/before the procedure.
     ]#
 
   var temp_pathsq: seq[string]

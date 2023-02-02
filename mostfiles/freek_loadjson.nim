@@ -33,7 +33,7 @@
 
 
 import json, tables, os, times, strutils
-import g_database, g_db2json, g_json_plus
+import g_database, g_db2json, g_json_plus, g_disk2nim, g_nim2json
 
 
 const storednodesdir = "stored_gui_nodes"
@@ -69,9 +69,18 @@ proc initialLoading(parjnob: JsonNode, pagest: string): JsonNode =
     tablesq: seq[string]
     firstelems_pathsq: seq[string] = @["all web-pages", "first web-page", "web-elements fp", "your-elem-type"]
     newjnob: JsonNode = parjnob
+    datalisq: seq[array[2, string]]
+    frontnamest: string = "noise_words"
+    tempjnob: JsonNode
+
 
   if pagest == "":   # first page: project_inner.html
-    discard   # no preloading
+    firstelems_pathsq = replaceLastItemOfSeq(firstelems_pathsq, "dropdowns fp")
+    datalisq = addShowValuesToSeq(writeFilePatternToSeq(frontnamest), frontnamest, "*")
+    tempjnob = createDropdownNodeFromSeq("sel_noise_words", "Pick noise-filter(s):", datalisq)
+    graftJObjectToTree("sel_noise_words", firstelems_pathsq, newjnob, tempjnob)
+
+
   elif pagest == "02":  # second page: project_inner02.html
     firstelems_pathsq = replaceLastItemOfSeq(firstelems_pathsq, "dropdowns fp")
     #graftJObjectToTree("All_tables", firstelems_pathsq, newjnob, 

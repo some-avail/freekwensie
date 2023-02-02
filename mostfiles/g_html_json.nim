@@ -31,13 +31,14 @@ var
   versionfl = 0.5
 
 
-type ShownTableElements* = enum
-  showEntryFilterRadio
-  showEntryRadio
-  showFilterRadio
-  showFilter
-  showRadio
-  showNone
+type 
+  ShownTableElements* = enum
+    showEntryFilterRadio
+    showEntryRadio
+    showFilterRadio
+    showFilter
+    showRadio
+    showNone
 
 
 
@@ -102,8 +103,9 @@ proc setRadioButtons*(jnob: JsonNode, setnamest, value_selectst:string): string 
 
 
 
+proc setCheckBoxSet*(jnob: JsonNode, setnamest:string, checked_onesq:seq[string], 
+                        align_horizontal: bool = false): string = 
 
-proc setCheckBoxSet*(jnob: JsonNode, setnamest:string, checked_onesq:seq[string]): string = 
 #[ 
 UNIT INFO:
 Generate code for a set of checkboxes with setnamest,
@@ -127,10 +129,15 @@ Returns for sample-def (default):
   g_json_plus.getDeepNodeFromKey(setnamest, jnob, foundjnob)
 
   var 
-    htmlst, boxnamest, labelst, checkst:string
+    htmlst, boxnamest, labelst, checkst, alignst:string
     selectbo: bool
 
   htmlst = ""
+
+  if align_horizontal:
+    alignst = ""
+  else:
+    alignst = "<br>"
 
     # every item in the array is a Jobject
   for item in foundjnob.items:
@@ -152,7 +159,7 @@ Returns for sample-def (default):
        "\" name=\"" & boxnamest & "\" value=\"" & boxnamest & "\""  & 
         " onchange=\"" & boxnamest & "_onchange()\"" &
        checkst & ">\p"
-    htmlst &= "<label for=\"id_" & boxnamest & "\">" & labelst & "</label><br>\p"
+    htmlst &= "<label for=\"id_" & boxnamest & "\">" & labelst & "</label>" & alignst & "\p"
 
   return htmlst
 
@@ -189,6 +196,7 @@ Sample output:
     dropdown_list, dropdown_html: string
     valIDst, valuest: string
     namest, labelst: string
+    attr_multist: string = ""
 
 
   var foundjnob: JsonNode = %*{}
@@ -198,6 +206,9 @@ Sample output:
   namest = dropdownnamest
   labelst = newlang(foundjnob["ddlab"].getStr())  # translated
   var valuelistsq = foundjnob["ddvalues"].getElems()   # values not translated for now
+
+  if sizeit > 1:
+    attr_multist = " multiple"
 
 
   for item in valuelistsq:
@@ -214,7 +225,7 @@ Sample output:
   dropdown_html = "<span ><label for=\"" & namest & "\">" & labelst & "</label></span>\p"
   # dropdown_html &= "<select id=\"" & namest & "\" name=\"" & namest & "\">\p"
   dropdown_html &= "<select id=\"" & namest & "\" name=\"" & namest & "\" size=\"" & 
-                      $sizeit & "\" onchange=\"" & namest & "_onchange()\">\p"
+                      $sizeit & "\" onchange=\"" & namest & "_onchange()\"" & attr_multist & ">\p"
   dropdown_html &= dropdown_list
   dropdown_html &= "</select>\p"
 
@@ -714,19 +725,18 @@ Old example of the select-element:
 
 when isMainModule:
   # echo setRadioButtons("orders", "")
-  # echo setCheckBoxSet("fr_checkset1", @["default"])
   # echo "---------"
   # echo setDropDown("text-language", "english")
   
   # freek_loadjson.setGuiJsonNode("freek")
 
   # echo setRadioButtons(freek_loadjson.gui_jnob, "radiosetexample", "")
-  # echo setCheckBoxSet(freek_loadjson.getGuiJsonNode("freek"), "checksetexample", @["default"])
+  echo setCheckBoxSet(freek_loadjson.readInitialNode("freek"), "checksetexample", @["default"], true)
 
   echo "============================"
 #  echo setDropDown(freek_loadjson.getGuiJsonNode("freek"), "dropdownname_01", "second realvalue", 1)
 
   # echo setRadioButtons(freek_loadjson.getGuiJsonNode("freek"), "radiosetexample", "rbut3")
 
-  echo setTableBasic(freek_loadjson.getGuiJsonNode("freek"), "table_01")
+  #echo setTableBasic(freek_loadjson.getGuiJsonNode("freek"), "table_01")
 

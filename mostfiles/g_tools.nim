@@ -45,6 +45,12 @@ proc split2*(st: string, sepst: string, maxsplit: int = -1): seq[string] =
 
 proc convertFileToSequence*(filepathst, skipst: string): seq[string] = 
 
+#[ 
+  Convert a file to a Nim-sequence.
+  Skip lines with the value skipst.
+ ]#
+
+
   var lisq: seq[string]
 
   withFile(txt, filepathst, fmRead):  # special colon
@@ -61,7 +67,32 @@ proc convertFileToSequence*(filepathst, skipst: string): seq[string] =
 
 
 
-proc convertSequenceToFile(filepathst: string, lisq: seq[string]) = 
+
+proc convertMultFilesToSeq*(filepathsq: seq[string], skipst: string): seq[string] = 
+
+#[ 
+  Convert a file to a Nim-sequence.
+  Skip lines with the value skipst.
+ ]#
+
+  var lisq: seq[string]
+
+  for filest in filepathsq:
+    withFile(txt, filest, fmRead):  # special colon
+      for line in txt.lines:
+        #echo line
+        if line.len > 0:
+          if line.len < skipst.len:
+            lisq.add(line)
+          else:
+            if line[0..skipst.len - 1] != skipst:
+              lisq.add(line)
+
+  result = lisq
+
+
+
+proc convertSequenceToFile*(filepathst: string, lisq: seq[string]) = 
   
   withFile(txt, filepathst, fmWrite):  # special colon
     for item in lisq:
@@ -74,11 +105,13 @@ when isMainModule:
   #echo split2("do Select after this", "SELECT")
 
 
-  echo convertFileToSequence("fq_noise_word.dat", ">>>")
+  #echo convertFileToSequence("fq_noise_word.dat", ">>>")
+  echo convertMultFilesToSeq(@["noise_words_dutch_generic.dat", "noise_words_english_generic.dat"], ">>>")
 
+  #[ 
   var skiplistsq = @["through", "Through", "between", "because", "various", "against", 
                   "important", "something", "another", "themselves", "currently",
                   "particular", "possible", "without", "several", "certain"]
 
   convertSequenceToFile("fq_noise_word.dat", skiplistsq)
-
+ ]#

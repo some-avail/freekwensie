@@ -3,7 +3,7 @@
 ]#
 
 
-import strutils, httpClient
+import strutils, httpClient, algorithm, sequtils
 import tables
 import g_options
 #import os, times
@@ -543,6 +543,34 @@ proc getInnerText2*(tekst: string, maxitemcountit: int = -1): string =
 
 
 
+
+proc createSeqOfUniqueWords*(input_tekst:string, wordlengthit:int): seq[string] = 
+  #[ 
+  Create a list of word-frequencies in html (useHtmlBreaksbo = true) or normal text.
+  Only add words with a length > wordlenghit
+  Limit the list-length to topcountit (like top 10)
+   ]#
+
+  var
+    wordsq, allwordssq: seq[string]
+    output_tekst, tempst:string
+    indexit: int = 0
+
+
+  wordsq = input_tekst.split(" ")
+  for wordst in wordsq:
+    tempst = removeSingleStrings(wordst, @[" ", "\p", "\t", "\c"])
+    if len(tempst) >= wordlengthit:
+      allwordssq.add(tempst)
+
+  sort(allwordssq)
+
+  result = deduplicate(allwordssq, true)
+
+
+
+
+
 proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string], 
                     useHtmlBreaksbo:bool, topcountit: int = 10000):string = 
   #[ 
@@ -909,19 +937,20 @@ when isMainModule:
  ]#
 
 
-#[ 
+#[ ]#   
   # TEST: getInnerText2 or calcWordFrequencies or countWords
   var 
-    sitest = getWebSite("https://www.bibliotecapleyades.net/sumer_anunnaki/esp_sumer_annunaki11.htm")
+    sitest = getWebSite("https://en.wikipedia.org/wiki/Well-formed_element")
     #sitest = getWebSite("https://www.bibliotecapleyades.net/atlantida_mu/esp_lemuria_11.htm")
     #sitest = getWebSite("https://www.nrc.nl/nieuws/2022/12/26/oostenrijk-het-russische-vliegdekschip-in-europa-a4152600")
 
   echo "-------------"
   #sitest = "bla>eerste<blubla>tweede<prrrrr>derde<hophop"
   #echo getInnerText2(sitest, 1)
-  echo calcWordFrequencies(getInnerText2(sitest), 7, @["pietje", "jantje"], false, 20)
+  #echo calcWordFrequencies(getInnerText2(sitest), 7, @["pietje", "jantje"], false, 20)
   #echo countWords(getInnerText2(sitest))
-]#   
+  echo createSeqOfUniqueWords(getInnerText2(sitest), 1)
+
 
 #[ 
 calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string], 
@@ -944,7 +973,7 @@ calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[strin
   #echo getHtmlHeaders("https://en.wikipedia.org/wiki/Well-formed_element")
   #echo getHtmlHeaders("https://nl.wikipedia.org/wiki/1961", docText, 1000)
 
-#[  ]#
+#[  
   var weblinkst: string = "https://en.wikipedia.org/wiki/extra/Well-formed_element"
   echo getPartFromWebAddress(weblinkst, addrGrandParent)
-
+]#

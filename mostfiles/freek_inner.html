@@ -7,32 +7,45 @@
 <div class="row-main">
   <form id="webbieform" action="/{{project_prefix}}" method="POST" target="{{newtab}}">
     <div class="row-controls">
-      <br><br>
-      <textarea name="tab_ID" readonly class="specialfield">{{{tab_id}}}</textarea>
-      <textarea name="curaction" readonly class="specialfield">idle</textarea>
-      <label>Status: &nbsp&nbsp&nbsp</label><label>{{{statustext}}}</label><br><br>
+      <div class="col-left">
+        <br>
+        <textarea name="tab_ID" readonly class="specialfield">{{{tab_id}}}</textarea>
+        <textarea name="curaction" readonly class="specialfield">idle</textarea>
+        <label>Status: &nbsp&nbsp&nbsp</label><label>{{{statustext}}}</label><br><br>
 
-      <button class="mybuttons" type="button" id="button_paste" onclick="butPasteLink()">Paste link / path</button>
-          <textarea name="pasted_link" id="pasted_link" onchange="pasted_link_onchange()">{{{pasted_text}}}</textarea><br>
-          <label id="labelseek">Seek:</label>
-          <textarea name="seekbox" id="seekbox" onchange="seekbox_onchange()">{{{seekbox}}}</textarea><br>
+        <button class="mybuttons" type="button" id="button_paste" onclick="butPasteLink()">Paste link / path</button>
+            <textarea name="pasted_link" id="pasted_link" onchange="pasted_link_onchange()">{{{pasted_text}}}</textarea><br>
+            <label id="labelseek">Seek:</label>
+            <textarea name="seekbox" id="seekbox" onchange="seekbox_onchange()">{{{seekbox}}}</textarea><br>
 
 
-      <button class="mybuttons" type="button" onclick="butGetChildLinks()">Retrieve child-links</button>    {{{sel_depth}}}&nbsp&nbsp&nbsp&nbsp&nbsp{{{check_show}}}
-      <button class="mybuttons" type="button" onclick="butProfile()">Start profiling</button>
-          {{{sel_number_results}}}<label id="labelsetnr">Show set-nr.:</label>
-          <button class="buttons_plusminus" type="button" onclick="butMinus()">-</button>
-          <textarea name="set_nr" id="set_nr">{{{set_nr}}}</textarea>
-          <button class="buttons_plusminus" type="button" onclick="butPlus()">+</button>
-          <label>Expert: </label>
-          <textarea name="custom_start" class="txa_start_end">{{{startpart}}}</textarea>
-          <textarea name="custom_end" class="txa_start_end">{{{endpart}}}</textarea><br><br>
+        <button class="mybuttons" type="button" onclick="butGetChildLinks()">Retrieve child-links</button>    {{{sel_depth}}}&nbsp&nbsp&nbsp&nbsp&nbsp{{{check_show}}}
+        <button class="mybuttons" type="button" onclick="butProfile()">Start profiling</button>
+            {{{sel_number_results}}}<label id="labelsetnr">Show set-nr.:</label>
+            <button class="buttons_plusminus" type="button" onclick="butMinus()">-</button>
+            <textarea name="set_nr" id="set_nr">{{{set_nr}}}</textarea>
+            <button class="buttons_plusminus" type="button" onclick="butPlus()">+</button><br>
+            
+        {{{check_globfreqlist}}}<label id="labelexpert">Expert: </label>
+            <textarea name="custom_start" class="txa_start_end">{{{startpart}}}</textarea>
+            <textarea name="custom_end" class="txa_start_end">{{{endpart}}}</textarea><br><br>
+      </div>
+
+      <div class="col-right">
+        <br>
+        <button class="manage_noise" type="button" id="button_noise" onclick="butNoiseManager()">Set up noise-words</button><br><br>
+        {{{sel_noise_words}}}
+        <br><br><br><br><br><br><br><br><br><br>
+        
+      </div>
 
     </div>
+
+
     <div class="results">
       {{{results_list}}}
-
     </div>
+
   </form>
 </div>
 

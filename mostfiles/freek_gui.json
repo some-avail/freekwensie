@@ -48,7 +48,12 @@
           "check_show_pre-results":
           [
             {"name":"chkshow_preresults","lab":"Show pre-results (child-links)","selected":true}
+          ],
+          "check_globfreqlist":
+          [
+            {"name":"chkCalcGlobFreqs","lab":"Calculate global frequencies","selected":false}
           ]
+
         },
         "dropdowns fp":
         {
@@ -82,13 +87,23 @@
               [
                 {"real-value": "5", "show-value": "5"},
                 {"real-value": "10", "show-value": "10"},
+                {"real-value": "15", "show-value": "15"},
                 {"real-value": "20", "show-value": "20"},
                 {"real-value": "30", "show-value": "30"},
                 {"real-value": "40", "show-value": "40"},
                 {"real-value": "50", "show-value": "50"},
                 {"real-value": "100", "show-value": "100"}
               ]
-            }
+            },
+          "sel_noise_words":
+          {
+            "ddlab": "Pick noise-filter(s):",
+            "ddvalues": 
+              [
+                {"real-value": "english", "show-value": "english"},
+                {"real-value": "dutch", "show-value": "dutch"}
+              ]
+          }
         },
         "datalists fp":
         {
