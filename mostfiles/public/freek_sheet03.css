@@ -1,0 +1,257 @@
+/* version 0.81
+
+	ADAP HIS
+  */
+
+
+body {
+/*  background-color: lightgoldenrodyellow;*/
+  background-color: beige;
+  /*height: 100vh;*/
+}
+
+textarea {
+  margin: 0px;
+  margin-left: 20px;
+  margin-right: 20px;
+  height: 17px;
+}
+
+#pasted_link {
+  width: 600px;  
+}
+
+#set_nr {
+  width: 50px;
+  text-align: center;
+}
+
+#seekbox {
+  width: 550px;
+}
+
+textarea.txa_start_end{
+  margin-left: 5px;
+  width: 110px;
+}
+
+/*For label*/
+#labelsetnr {
+  margin-left: 20px;
+}
+
+#labelseek, #id_chkCalcGlobFreqs {
+  margin-left: 225px;
+  margin-right: 10px;
+}
+
+#labelexpert {
+  margin-left: 30px;
+}
+
+
+table, th, td {
+  border: 1px solid black;
+  /*border-collapse: collapse;*/
+}
+
+th, td {
+  padding: 6px;
+  font-size: 13px;
+}
+
+#first_row_prof_table {
+  color: purple;
+  font-weight: bold;
+}
+
+#freq_col_prof_table{
+  width: 175px;
+}
+
+/*#extra_col_prof_table{
+  width: 175px;  
+}
+*/
+
+table {
+  margin-left: 50px; 
+  margin-right: 50px;
+}
+
+#weblinks_table {
+  margin-left: auto; 
+  margin-right: auto;  
+  table-layout: auto;
+  width: 100%; 
+}
+
+
+/*table {
+  margin-left: auto; 
+  margin-right: auto;
+*/}
+
+
+select{
+  padding: 5px 10px;
+  background-color: #008CBA;
+  font-size: 12px;
+}
+
+
+.row-top {
+  color: green;
+  background-color: yellow;
+  /*background-color:lightsteelblue;*/
+  width: 100%;
+  height: 3.5%}
+
+
+.rtop-left {
+  float: left;
+  width: 33%;
+  background-color:violet;
+  }
+
+
+.rtop-mid {
+  float: left;
+  width: 33%;
+  /*font-weight: bold;*/
+  background-color:lightblue;
+  }
+  
+
+.rtop-right {
+  float: right;
+  width: 33%;
+  background-color:violet;
+  }
+
+
+.row-main {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  font-size: 14px;
+  /*overflow: hidden;*/
+}
+
+.row-one {
+  background-color: beige;
+  margin: 20px;  
+}
+
+.col-left {
+  float: left;
+  width: 28%;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  /*height: 60%;*/
+  /*padding: 1.5%*/
+}
+
+
+.col-mid {
+  float: left;
+  width: 28%;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  /*height: 60%;*/
+  /*padding: 1.5%*/
+}
+
+.col-right {
+  float: left;
+  width: 40%;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  /*height: 60%;*/
+  /*padding: 1.5%*/
+}
+
+
+.row-two {
+  display: inline-block;
+  margin-top: 40px;
+  margin-left: 5px;
+}
+
+
+.results {
+  margin-top: 10px;
+}
+
+
+.specialfield {
+  background-color: lightgrey;
+  width: 100px;
+  height: 20px;
+  margin: 3px;
+  border-radius: 12px;
+  font-size: 12px;
+  padding: 3px;
+}
+
+
+.mybuttons {
+  border: none;
+  color: white;
+  background-color: #008CBA;
+  padding: 9px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  margin: 10px;
+  cursor: pointer;
+  width: 200px;
+  border-radius: 12px;
+  }
+
+.buttons_plusminus {
+  border: none;
+  color: white;
+  background-color: #008CBA;
+  padding: 9px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 12px;
+  width: 30px;
+
+}
+
+.but_prev_next {
+  border: none;
+  color: white;
+  background-color: #008CBA;
+  padding: 9px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 12px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+
+/* Responsive layout - makes the columns stack on top of each other instead of next to each other */
+
+@media screen and (max-width: 600px) {
+  .col-mid, .col-right {
+    width: 100%;
+  }
+}
+

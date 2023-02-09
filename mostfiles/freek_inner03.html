@@ -1,0 +1,38 @@
+<!-- project_inner.html is nested within project_outer.html 
+      by means of the moustachu-variable controls-group in the outer page.
+      In this page the real content is placed. Moustachu-vars have a 
+      double or triple curly brace. -->
+
+
+<div class="row-main">
+  <form id="webbieform" action="/noisework" method="POST" target="{{newtab}}">
+    <div class="row-one">
+        <br>
+        <textarea name="tab_ID" readonly class="specialfield">{{{tab_id}}}</textarea>
+        <textarea name="curaction" readonly class="specialfield">idle</textarea>
+        <label>Status: &nbsp&nbsp&nbsp</label><label>{{{statustext}}}</label><br><br>
+
+        <div class="col-left">
+          {{{sel_noise_sources}}}
+        </div>
+        <div class="col-mid">
+          {{{sel_noise_words}}}
+        </div>
+        <div class="col-right">
+          {{{info_update}}}
+        </div>
+
+        <div class="row-two">
+          <label>Threshold-fraction:</label><textarea id="fraction" name="fraction">{{{fraction}}}</textarea>
+          <label>Maximal nr. of links:</label><textarea id="max_links" name="max_links">{{{max_links}}}</textarea>
+          <br><br>
+          <button class="mybuttons" type="button" onclick="butPreCalc()">Pre-calculate values</button>
+          <button class="mybuttons" type="button" onclick="butGenerate()">Generate noise-word-file (overwrite)</button>
+
+        </div>
+    </div>
+
+  </form>
+</div>
+
+
