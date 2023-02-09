@@ -114,7 +114,6 @@ function seekbox_onchange() {
   document.getElementsByName("curaction")[0].value = "entering terms..";
   document.forms["webbieform"].submit();
   // document.getElementById("button_paste").focus();
-
 }
 
 
@@ -165,39 +164,8 @@ function butPlus() {
   document.getElementById("set_nr").value = newnumji;
   }
 
-
-// ===================================
-
-function butClearFilter() {
-  console.log("testing 123");
-  document.getElementsByName("curaction")[0].value = "clearing..";
-
-  var elems = document.getElementsByClassName("filtering");
-  for (var i=0; i<elems.length; i++) {
-    elems[i].value = "";}
-
-  document.getElementsByName("curaction")[0].value = "idle";  
-  }
-
-
-
-
-function butDelete() {
-  console.log("testing 123");
-  document.getElementsByName("curaction")[0].value = "deleting..";
-  document.forms["webbieform"].submit();
+function butNoiseManager() {
+  var pathjs = window.location.href
+  var newpathjs = pathjs + '/../noisework'
+  window.open(newpathjs);
 }
-
-
-// function dropdownname_02_onchange() {
-// // write selection-change to status-text
-
-//   var selectjo = document.getElementById("dropdownname_02");
-//   var valuejs = selectjo.options[selectjo.selectedIndex].value;
-//   // console.log("bericht is:" + valuejs);
-
-//   var messagejs = "From dropdown2, item " + selectjo.selectedIndex + " = " + valuejs;
-
-//   setMoustachuVar("statustext", messagejs);
-// }
-

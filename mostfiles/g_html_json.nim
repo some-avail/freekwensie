@@ -197,6 +197,7 @@ Sample output:
     valIDst, valuest: string
     namest, labelst: string
     attr_multist: string = ""
+    breakest: string = ""
 
 
   var foundjnob: JsonNode = %*{}
@@ -209,6 +210,7 @@ Sample output:
 
   if sizeit > 1:
     attr_multist = " multiple"
+    breakest = "<br>"
 
 
   for item in valuelistsq:
@@ -222,7 +224,7 @@ Sample output:
       dropdown_list &= "<option value=\"" & valIDst & "\">" & valuest & "</option>\p"
 
 
-  dropdown_html = "<span ><label for=\"" & namest & "\">" & labelst & "</label></span>\p"
+  dropdown_html = "<span ><label for=\"" & namest & "\">" & labelst & "</label></span>" & breakest & "\p"
   # dropdown_html &= "<select id=\"" & namest & "\" name=\"" & namest & "\">\p"
   dropdown_html &= "<select id=\"" & namest & "\" name=\"" & namest & "\" size=\"" & 
                       $sizeit & "\" onchange=\"" & namest & "_onchange()\"" & attr_multist & ">\p"

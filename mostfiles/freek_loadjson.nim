@@ -70,13 +70,12 @@ proc initialLoading(parjnob: JsonNode, pagest: string): JsonNode =
     firstelems_pathsq: seq[string] = @["all web-pages", "first web-page", "web-elements fp", "your-elem-type"]
     newjnob: JsonNode = parjnob
     datalisq: seq[array[2, string]]
-    frontnamest: string = "noise_words"
     tempjnob: JsonNode
 
 
   if pagest == "":   # first page: project_inner.html
     firstelems_pathsq = replaceLastItemOfSeq(firstelems_pathsq, "dropdowns fp")
-    datalisq = addShowValuesToSeq(writeFilePatternToSeq(frontnamest), frontnamest, "*")
+    datalisq = addShowValuesToSeq(writeFilePatternToSeq("noise_words"), "noise_words", "*")
     tempjnob = createDropdownNodeFromSeq("sel_noise_words", "Pick noise-filter(s):", datalisq)
     graftJObjectToTree("sel_noise_words", firstelems_pathsq, newjnob, tempjnob)
 
@@ -90,6 +89,16 @@ proc initialLoading(parjnob: JsonNode, pagest: string): JsonNode =
                       createDropdownNodeFromDb("All_tables", "sqlite_master", @["name", "name"], 
                           compNotSub, @[["type", "index"],["name", "sqlite"]], @["name"], "ASC"))
 
+  elif pagest == "03":   # third page: project_inner03.html
+    firstelems_pathsq = replaceLastItemOfSeq(firstelems_pathsq, "dropdowns fp")
+    
+    datalisq = addShowValuesToSeq(writeFilePatternToSeq("noise_sources"), "", "")
+    tempjnob = createDropdownNodeFromSeq("sel_noise_sources", "Select a noise-source:", datalisq)
+    graftJObjectToTree("sel_noise_sources", firstelems_pathsq, newjnob, tempjnob)
+
+    datalisq = addShowValuesToSeq(writeFilePatternToSeq("noise_words"), "", "")
+    tempjnob = createDropdownNodeFromSeq("sel_noise_words", "Noise-word-lists:", datalisq)
+    graftJObjectToTree("sel_noise_words", firstelems_pathsq, newjnob, tempjnob)
 
   #result = parjnob
   result = newjnob

@@ -46,7 +46,7 @@ from g_html_json import nil
 
 
 const 
-  versionfl:float = 0.73
+  versionfl:float = 0.75
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -291,8 +291,8 @@ routes:
 
     if @"curaction" == "profiling..":
       if @"chkCalcGlobFreqs" == "chkCalcGlobFreqs": calcglobalfreqsbo = true
-      button_nekst = "<button name=\"butNext\" class=\"but_prev_next\" type=\"button\" onclick=\"getNextSet()\">Next set</button>"
-      button_prevst = "<button name=\"butPrev\" class=\"but_prev_next\" type=\"button\" onclick=\"getPrevSet()\">Previous set</button>"
+      button_nekst = "<button name=\"butNext\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getNextSet()\">Next set</button>"
+      button_prevst = "<button name=\"butPrev\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getPrevSet()\">Previous set</button>"
       weblinkst = @"pasted_link" & createSearchString(@"seekbox")      
       parent_titlest = getTitleFromWebsite2(weblinkst)
       outervarob["pagetitle"] = appnamebriefst & "_" & parent_titlest & "  -- " & appnamenormalst
@@ -382,6 +382,140 @@ routes:
 
     resp showPage(innervarob, outervarob, "")
 
+
+
+  get "/noisework":
+    var
+      statustekst:string
+      innervarob: Context = newContext()  # inner html insertions
+      outervarob: Context = newContext()   # outer html insertions
+
+    var initialjnob = freek_loadjson.readInitialNode(project_prefikst, "03")
+    outervarob["sequence_nr"] = "03"
+
+    innervarob["statustext"] = """OK"""
+    innervarob["newtab"] = "_self"
+    outervarob["version"] = $versionfl
+    outervarob["loadtime"] ="Page-load: " & $now()
+    outervarob["namenormal"] = appnamenormalst
+    outervarob["namelong"] = appnamelongst
+    outervarob["namesuffix"] = appnamesuffikst
+    outervarob["pagetitle"] = appnamenormalst & " _ " & appnamelongst & appnamesuffikst   
+    outervarob["project_prefix"] = project_prefikst
+
+    innervarob["project_prefix"] = project_prefikst  
+
+    innervarob["sel_noise_sources"] = g_html_json.setDropDown(initialjnob, "sel_noise_sources", 
+                                              "", 5)
+
+    innervarob["sel_noise_words"] = g_html_json.setDropDown(initialjnob, "sel_noise_words", 
+                                              "", 5)
+
+    innervarob["info_update"] = """Pre-warning: generation will overwrite current words-file; 
+          copy it to keep it. <br><br>A noise-words-file is needed to exclude all noise-words like 
+          'the' or 'have' from the frequency-list. It is generated from the noise-sources-file 
+          with the same suffix. Create a noise-sources-file, refresh, set the parameters, run pre-calc and 
+          when OK run Generate. Refresh page to reload the file-listings. See wiki for further 
+          information."""
+
+    innervarob["fraction"] = "0.5"
+    innervarob["max_links"] = "10"
+
+
+    resp showPage(innervarob, outervarob, "03")
+
+
+
+  post "/noisework":
+    var
+      statustekst:string
+      innervarob: Context = newContext()  # inner html insertions
+      outervarob: Context = newContext()   # outer html insertions
+
+      cookievaluest, locationst, mousvarnamest: string
+      funcpartsta =  initOrderedTable[string, string]()
+      firstelems_pathsq: seq[string] = @["all web-pages", "first web-page", "web-elements fp", "your-element"]
+      gui_jnob: JsonNode
+      clipob = clipboard_new(nil)
+      tabidst, infost: string
+
+
+
+    when persisttype == persistNot:
+      gui_jnob = readInitialNode(project_prefikst, "03")
+    else:
+      when persisttype == persistOnDisk: 
+        if theTimeIsRight():
+          deleteExpiredFromAccessBook()
+      if len(@"tab_ID") == 0:
+        tabidst = genTabId()
+      else:
+        tabidst = @"tab_ID"
+
+      gui_jnob = readStoredNode(tabidst, project_prefikst, "03")
+      innervarob["tab_id"] = tabidst
+
+
+    outervarob["sequence_nr"] = "03"
+
+    innervarob["newtab"] = "_self"
+    outervarob["version"] = $versionfl
+    outervarob["loadtime"] ="Page-load: " & $now()
+    outervarob["namenormal"] = appnamenormalst
+    outervarob["namelong"] = appnamelongst
+    outervarob["namesuffix"] = appnamesuffikst
+    outervarob["pagetitle"] = appnamelongst & appnamesuffikst
+    outervarob["project_prefix"] = project_prefikst
+
+    innervarob["project_prefix"] = project_prefikst  
+
+    # ==========non-standard code starting here===========
+    innervarob["sel_noise_sources"] = g_html_json.setDropDown(gui_jnob, "sel_noise_sources", 
+                                                              @"sel_noise_sources", 5)
+
+    innervarob["sel_noise_words"] = g_html_json.setDropDown(gui_jnob, "sel_noise_words", 
+                                                              @"sel_noise_words", 5)
+
+    innervarob["fraction"] = @"fraction"
+    innervarob["max_links"] = @"max_links"
+
+    if @"curaction" == "calculating..":
+      infost = noiseVarMessages(@"sel_noise_sources", @"fraction", @"max_links")
+      if infost == "":
+        infost = createNoiseWordsList(@"sel_noise_sources", parseFloat(@"fraction"), parseInt(@"max_links"), true)
+
+      innervarob["info_update"] = infost
+
+
+    if @"curaction" == "generating..":
+      infost = noiseVarMessages(@"sel_noise_sources", @"fraction", @"max_links")
+      if infost == "":
+        infost = createNoiseWordsList(@"sel_noise_sources", parseFloat(@"fraction"), parseInt(@"max_links"), false)
+
+      innervarob["info_update"] = infost
+
+
+    # ==========non-standard code ending here===========
+  
+    # A server-function may have been called from client-side (browser-javascript) by
+    # preparing a cookie for the server (that is here) to pick up and execute.
+    # (what i call a cookie-tunnel)
+    if request.cookies.haskey(project_prefikst & "_run_function"):
+      cookievaluest = request.cookies[project_prefikst & "_run_function"]
+      if cookievaluest != "DISABLED":
+        funcpartsta = getFuncParts(cookievaluest) 
+        locationst = funcpartsta["location"]  # innerhtml-page or outerhtml-page
+        mousvarnamest = funcpartsta["mousvarname"]
+
+        if locationst == "inner":
+          innervarob[mousvarnamest] = runFunctionFromClient(funcpartsta, gui_jnob)
+        elif locationst == "outer":
+          outervarob[mousvarnamest] = runFunctionFromClient(funcpartsta, gui_jnob)
+
+    when persisttype != persistNot:
+      writeStoredNode(tabidst, gui_jnob)
+
+    resp showPage(innervarob, outervarob, "03")
 
 
   get "/datawork":
