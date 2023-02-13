@@ -38,25 +38,47 @@ textarea.txa_start_end{
   margin-left: 20px;
 }
 
-#labelseek, #id_chkCalcGlobFreqs {
+#labelseek, #id_chkCalcGlobFreqs, #labelclusion {
   margin-left: 225px;
   margin-right: 10px;
 }
+
 
 #labelexpert {
   margin-left: 30px;
 }
 
+#excludable {
+  margin-left: 10px;
+}
+
+textarea.txtclude {
+  width: 200px;
+}
 
 table, th, td {
   border: 1px solid black;
   /*border-collapse: collapse;*/
 }
 
+table {
+  margin-left: 50px; 
+  margin-right: 50px;
+}
+
 th, td {
   padding: 6px;
-  font-size: 13px;
+  font-size: 15px;
 }
+
+
+#weblinks_table {
+  margin-left: auto; 
+  margin-right: auto;  
+  table-layout: auto;
+  width: 100%; 
+}
+
 
 #first_row_prof_table {
   color: purple;
@@ -71,18 +93,6 @@ th, td {
   width: 175px;  
 }
 */
-
-table {
-  margin-left: 50px; 
-  margin-right: 50px;
-}
-
-#weblinks_table {
-  margin-left: auto; 
-  margin-right: auto;  
-  table-layout: auto;
-  width: 100%; 
-}
 
 
 /*table {
@@ -169,6 +179,7 @@ select{
 .results {
   display: inline-block;
   margin-top: 10px;
+  font-size: 17px;  
 }
 
 

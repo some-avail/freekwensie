@@ -219,7 +219,7 @@ proc createNoiseWordsList*(weblink_or_filest: string, threshold_fractionfl: floa
           weblinksq.add(wlinkst)
           zerocountit += 1
         of 1:
-          getchildscountit = getChildLinks(wlinkst, 1, 1, 1,excludesubsq ,datasq)
+          getchildscountit = getChildLinks(wlinkst, 1, 1, 1, @[], excludesubsq ,datasq)
           linkcountit = 1
           for ar in datasq:
             if linkcountit <= maxlinksit:

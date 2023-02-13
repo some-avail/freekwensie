@@ -159,7 +159,7 @@ routes:
       tabidst, resultst, freqlist, sitest, parent_titlest, child_titlest, innertekst, reversest: string
       extra_list, button_nekst, button_prevst, nav_noticest: string
       linkcountit, setsizeit, setcountit, itemstartit, itemendit, getchildscountit: int
-      excludesubsq: seq[string]
+      excludesubsq, includesubsq: seq[string]
       weblinkst, globfreqtablest: string
       seqcountit: int
       calcglobalfreqsbo: bool = false
@@ -228,8 +228,10 @@ routes:
     innervarob["sel_noise_words"] = g_html_json.setDropDown(gui_jnob, "sel_noise_words", 
                                                               @"sel_noise_words", 5)
 
+    innervarob["include_in_lnx"] = @"includable"
+    innervarob["exclude_from_lnx"] = @"excludable"
 
-
+#[ 
     if @"curaction" in ["pasting..", "changing link..", "entering terms.."]:
       # (re)set the dataseq which will hold the mined weblinks for the specific tabID
       if datasqta.hasKey(tabidst):
@@ -242,29 +244,44 @@ routes:
         globwordsqta[tabidst] = @[]
       else:
         globwordsqta.add(tabidst, @[])
-
+ ]#
 
     if @"curaction" == "pasting..":
       outervarob["pagetitle"] = appnamelongst & appnamesuffikst    
       innervarob["pasted_text"] = $clipob.clipboard_text()
       innervarob["statustext"] = "Pasting ready."
 
+#[ 
     if @"curaction" == "changing link..":
       innervarob["statustext"] = "Link changed and updated."
 
     if @"curaction" == "entering terms..":
       innervarob["statustext"] = "Search terms entered."
-
+ ]#
 
 
     if @"curaction" == "retrieving..":
+      # (re)set the dataseq which will hold the mined weblinks for the specific tabID
+      if datasqta.hasKey(tabidst):
+        datasqta[tabidst] = @[]
+      else:
+        datasqta.add(tabidst, @[])
+
+      # reset the global word-store (to create later global word-freqs)
+      if globwordsqta.hasKey(tabidst):
+        globwordsqta[tabidst] = @[]
+      else:
+        globwordsqta.add(tabidst, @[])
+
       weblinkst = @"pasted_link" & createSearchString(@"seekbox")
       sitest = getWebSite(weblinkst)
       parent_titlest = getTitleFromWebsite2(weblinkst)
       outervarob["pagetitle"] = appnamebriefst & "_LNX_" & parent_titlest & "  -- " & appnamenormalst
-      excludesubsq = getValList(readOptionFromFile("subs-not-in-childlinks", optValueList))
+      includesubsq = split(@"includable", ",,")
+      excludesubsq = split(@"excludable", ",,") & getValList(readOptionFromFile("subs-not-in-childlinks", optValueList))
       if sitest != "":
-        getchildscountit = getChildLinks(weblinkst, parseint(@"sel_parsing_depth"), 1, 1,excludesubsq ,datasqta[tabidst])
+        getchildscountit = getChildLinks(weblinkst, parseint(@"sel_parsing_depth"), 1, 1, 
+                                          includesubsq, excludesubsq ,datasqta[tabidst])
         if @"chkshow_preresults" == "chkshow_preresults":
           resultst = "<table id=\"weblinks_table\">\p"
           for item in datasqta[tabidst]:

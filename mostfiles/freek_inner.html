@@ -20,6 +20,9 @@
 
 
         <button class="allbuttons mybuttons" type="button" onclick="butGetChildLinks()">Retrieve child-links</button>    {{{sel_depth}}}&nbsp&nbsp&nbsp&nbsp&nbsp{{{check_show}}}
+          <label id="labelclusion">In-/exclude:</label>
+          <textarea class="txtclude" id="includable" name="includable">{{{include_in_lnx}}}</textarea>
+          <textarea class="txtclude" id="excludable" name="excludable">{{{exclude_from_lnx}}}</textarea><br>
         <button class="allbuttons mybuttons" type="button" onclick="butProfile()">Start profiling</button>
             {{{sel_number_results}}}<label id="labelsetnr">Show set-nr.:</label>
             <button class="allbuttons buttons_plusminus" type="button" onclick="butMinus()">-</button>

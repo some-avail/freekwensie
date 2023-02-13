@@ -103,18 +103,18 @@ function butPasteLink() {
 }
 
 
-function pasted_link_onchange() {
-  document.getElementsByName("curaction")[0].value = "changing link..";
-  document.forms["webbieform"].submit();    
-  // document.getElementById("seekbox").focus();  
-}
+// function pasted_link_onchange() {
+//   document.getElementsByName("curaction")[0].value = "changing link..";
+//   document.forms["webbieform"].submit();    
+//   // document.getElementById("seekbox").focus();  
+// }
 
 
-function seekbox_onchange() {
-  document.getElementsByName("curaction")[0].value = "entering terms..";
-  document.forms["webbieform"].submit();
-  // document.getElementById("button_paste").focus();
-}
+// function seekbox_onchange() {
+//   document.getElementsByName("curaction")[0].value = "entering terms..";
+//   document.forms["webbieform"].submit();
+//   // document.getElementById("button_paste").focus();
+// }
 
 
 
