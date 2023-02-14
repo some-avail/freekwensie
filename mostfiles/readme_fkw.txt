@@ -1,6 +1,6 @@
 Freekwensie
 
-FKW is a website-profiler. Starting from a parent-weblink one can retrieve all the child-links (to a certain depth). Next one can create a short profile per weblink, so that the usefullness of the website can be assessed without entering it (or at least that is the idea). FKW is a web-app running in the browser. Furthermore, FWK should be ready-to-run, that is not needing additional package-installations except for the executable and the co-delivered data-files.
+FKW is a website-profiler. Starting from a parent-weblink one can retrieve all the child-links (to a certain depth). From 0.75 onward with this principle it is also ease to search and parse the results.  Next one can create a short profile per weblink, so that the usefullness of the website can be assessed without entering it (or at least that is the idea). FKW is a web-app running in the browser. Furthermore, FWK should be ready-to-run, that is not needing additional package-installations except for the executable and the co-delivered data-files.
 
 
 INSTALLATION ON WINDOWS
@@ -18,6 +18,9 @@ INSTALLATION ON LINUX
   - type: ./freek_startup
   - press enter
 - To access the web-server you just started (and thus start the app), type in your browser: http://localhost:5200/freek
+
+More info on:
+https://github.com/some-avail/freekwensie
 
 
 Enjoy,

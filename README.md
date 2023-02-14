@@ -48,7 +48,7 @@ FKW is a web-app running in the browser. Furthermore, FWK should be ready-to-run
 - To access the web-server you just started (and thus start the app), type in your browser: http://localhost:5200/freek
 
 #### Installation by building (for developers)
-Developers with knowledge of nim can download the code and do the following:
+Developers with knowledge of nim can download /clone the code and do the following:
 - install external components:
 	- nimclipboard-lib:
 		> on linux mint 19 you need to install folowing packages:
@@ -58,13 +58,19 @@ Developers with knowledge of nim can download the code and do the following:
 	- jester
 
 Run the command:
-nim c -d:ssl -r flashread.nim
-which will compile the code to an executable, which will then be executed. The running program then acts as a local  web-server, which can be invoked from a web-browser, by typing:
-http://localhost:5050/flashread-form
+nim c -d:ssl -d:release -r freek_startup.nim
+which will compile the code to an executable, which will then be executed. 
+In the developper-version I use the port-number 5180, which can be altered in freek_settings.conf to 5200, by moving the "#" one line.
+The running program acts as a local  web-server, which can be connected to in a web-browser, by typing:
+http://localhost:5200/freek_startup
+
+### What's new in x.y?
+[Open the whats-new-file](mostfiles/whatsnew_fkw.txt)  
+Or for programmers look at the commits.
+[Commits-list](https://github.com/some-avail/freekwensie/commits/main)
 
 #### Future plans ?
 - adding database-support to enable document-selection based on word selections.
-- improved noise-word-handling with help of a "noise-word-generator"
 - optionally adding images.
 - etc.
 

@@ -1,0 +1,19 @@
+What's new in:
+
+### 0.75
+-noise-word-usage in the frequency-lists.
+  * select a noise-word-file to filtered frequently used (hence non-specific) words.
+  * create a noise-word-file for a new language or area with the wizard. (allready created for english, german and dutch).
+  * with the new noise-word-file the lenght-var is changed from 7 to 3.
+  * look at wiki for more info
+-weblinks to include or exclude can be filtered now.
+-defaulting to a search-engine:
+  * from which the results can be parsed like other weblinks.
+  * for which the search terms can be entered in the seekbox (which are appended to the search-link).
+  * currently using bing.
+-jump to link directly from weblink-list.
+-multiple value now settable in the option-file: freek_settings.conf
+
+
+### 0.71
+-first release
