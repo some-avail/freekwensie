@@ -323,7 +323,7 @@ routes:
       for item in datasqta[tabidst]:
         if linkcountit >= itemstartit and linkcountit <= itemendit:        
           sitest = getWebSite(item[2])
-          innertekst = getInnerText2(sitest)
+          innertekst = getInnerText2(sitest, -1, 80)
           child_titlest = getTitleFromWebsite2(item[2])
           if sitest != "":
             echo "Retrieving nr... " & $item[4]
@@ -331,7 +331,7 @@ routes:
             if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, globwordsqta[tabidst])
             resultst &= "<table>\p"
             resultst &= "<tr>\p"
-            resultst &= "<td id=\"first_row_prof_table\" colspan=\"2\">" & child_titlest & "<br>" & item[3] & "</td>\p"
+            resultst &= "<td id=\"first_row_prof_table\" colspan=\"3\">" & child_titlest & "<br>" & item[3] & "</td>\p"
             resultst &= "<td id=\"freq_col_prof_table\" rowspan=\"5\">" & freqlist & "</td>\p"
             if @"custom_start" != "" and @"custom_end" != "":
               extra_list = getContentList(sitest, @"custom_start", @"custom_end", docHtml, maxcontentitemsit)
@@ -342,23 +342,25 @@ routes:
               resultst &= "<td id=\"extra_col_prof_table\" rowspan=\"5\">" & extra_list & "</td>\p"                
 
             resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"2\"><a href=\"" & item[2] & "\" target=\"" & targetwindowst & "\">" & item[2] & "</a></td>\p"
+            resultst &= "<td colspan=\"3\"><a href=\"" & item[2] & "\" target=\"" & targetwindowst & "\">" & item[2] & "</a></td>\p"
             resultst &= "</tr>\p"
 
             resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"2\">" & getIntroText(innertekst, introtextsizit) & "</td>\p"
+            resultst &= "<td colspan=\"3\">" & getIntroText(innertekst, introtextsizit) & "</td>\p"
             resultst &= "</tr>\p"
 
             resultst &= "<tr>\p"
-            resultst &= "<td>Depth = " & item[1] & 
-                        "<br>Word-count = " & $countWords(innertekst) & "</td>\p"
-            resultst &= "<td>Link-count = " & $count(sitest, "<a ") & 
-                          "<br>Image-count = " & $count(sitest, "<img ") & "</td>\p"
+            resultst &= "<td>Depth: " & item[1] & 
+                        "<br>Words: " & $countWords(innertekst) & "</td>\p"
+            resultst &= "<td>Links: " & $count(sitest, "<a ") & 
+                          "<br>Images: " & $count(sitest, "<img ") & "</td>\p"
+            resultst &= "<td>" & getYearInfo(innertekst) & "</td>\p"
             resultst &= "</tr>\p"
+
 
             resultst &= "<tr>\p"
             resultst &= "<td>" & item[4] & "</td>\p"
-            resultst &= "<td>" & item[0] & "</td>\p"
+            resultst &= "<td colspan=\"2\">" & item[0] & "</td>\p"
             resultst &= "</tr>\p"
 
             resultst &= "</table><br><br>\p"

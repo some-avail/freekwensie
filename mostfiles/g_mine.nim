@@ -454,20 +454,45 @@ proc removeDuplicateStrings(tekst: string, removablesq: seq[string]): string =
 
 
 
+proc removeLongWords(tekst: string, maxwordlengthit: int): string = 
+#[ remove long words
+  ADAP FUT:
+  ?- choplongwordsbo: chop them up
+ ]#
 
-proc getInnerText2*(tekst: string, maxitemcountit: int = -1): string =
+  var
+    wordsq: seq[string]
+    clippedtekst: string
+    wlengthit: int
+
+  if maxwordlengthit != -1:
+    wordsq = tekst.splitWhitespace()
+    for word in wordsq:
+      if word.len <= maxwordlengthit:
+        clippedtekst &= word & " "
+    result = clippedtekst
+  else:
+    result = tekst
+
+  
+
+
+proc getInnerText2*(tekst: string, maxitemcountit: int = -1, maxwordlengthit: int = -1): string =
   #[ 
-  Generic text-extraction of website.
+  Generic text-extraction of html-code.
   Based on getDataSeqDirty(tekst, ">", "<")
+
+  params -1 means: no limits
 
   ADAP FUT
   -better clean up of page-breaks etc.
    ]#
 
   var
-    datasq: seq[string]
-    newtekst, itemst: string
+    datasq, wordsq: seq[string]
+    newtekst, itemst, clippedtekst: string
     itemcountit: int = 1
+    wlengthit: int
 
   datasq = getDataSeqDirty(tekst, ">", "<")
 
@@ -475,13 +500,18 @@ proc getInnerText2*(tekst: string, maxitemcountit: int = -1): string =
   for elem in datasq:
     if not ('{' in elem):   # filter out script
       if itemcountit <= maxitemcountit or maxitemcountit == -1:
-        newtekst &= elem
-      itemcountit += 1
+        if maxwordlengthit != -1:
+          newtekst &= removeLongWords(elem, maxwordlengthit)
+        else:
+          newtekst &= elem
+
+        itemcountit += 1
 
   newtekst = removeSingleStrings(newtekst, @["&nbsp;", "&nbsp"])
   newtekst = removeDuplicateStrings(newtekst, @[" ", "\n", "\t","\c", "\c\n" ,"\n ", "\t\n", "\t\c", "\t \n"])
 
   result = newtekst
+
 
 
 
@@ -948,8 +978,9 @@ when isMainModule:
   echo mydatasq.len
  ]#
 
-#[  ]#
+#[  
   echo substringsInString("aap noot", @["piet"], true)
+]#
 
   #[ 
   # TEST: getChildLinks
@@ -968,7 +999,7 @@ when isMainModule:
  ]#
 
 
-#[ 
+#[ ]#
   # TEST: getInnerText2 or calcWordFrequencies or countWords
   var 
     sitest = getWebSite("https://en.wikipedia.org/wiki/Well-formed_element")
@@ -977,11 +1008,11 @@ when isMainModule:
 
   echo "-------------"
   #sitest = "bla>eerste<blubla>tweede<prrrrr>derde<hophop"
-  #echo getInnerText2(sitest, 1)
+  echo getInnerText2(sitest, -1, 1000)
   #echo calcWordFrequencies(getInnerText2(sitest), 7, @["pietje", "jantje"], false, 20)
   #echo countWords(getInnerText2(sitest))
-  echo createSeqOfUniqueWords(getInnerText2(sitest), 1)
-]#
+  #echo createSeqOfUniqueWords(getInnerText2(sitest), 1)
+
 
 
 #[ 
@@ -1009,3 +1040,5 @@ calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[strin
   var weblinkst: string = "https://en.wikipedia.org/wiki/extra/Well-formed_element"
   echo getPartFromWebAddress(weblinkst, addrGrandParent)
 ]#
+
+  echo removeLongWords("kort of iets langer of heeeeeeeeel heel lang", 8)

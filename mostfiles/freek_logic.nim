@@ -1,5 +1,5 @@
 import std/[random, tables, math]
-import strutils
+import strutils, algorithm
 import g_mine, g_templates, g_tools, g_options
 
 
@@ -123,7 +123,7 @@ proc createFreqTableFromWordList*(wordlisq: seq[string], numcolsit, numrowsit: i
   result = resultst
 
 
-
+#[ 
 
 proc createNoiseWordsList_old(sourcefilest: string, threshold_fractionfl: float = 0.7) =
   
@@ -180,7 +180,7 @@ proc createNoiseWordsList_old(sourcefilest: string, threshold_fractionfl: float 
 
   convertSequenceToFile(targetfilest, freqlisq)
 
-
+ ]#
 
 proc createNoiseWordsList*(weblink_or_filest: string, threshold_fractionfl: float,
                             maxlinksit: int, precalc_onlybo: bool = false): string =
@@ -340,6 +340,40 @@ proc noiseVarMessages*(filename, fraction, max_num_of_links: string): string =
     result = messt
 
 
+proc getYearsSeqFromText(tekst: string): seq[int] = 
+  #[Extract year-numbers from tekst and put them in an
+  ordered sequence.  ]#
+
+  var
+    yearsq: seq[int]
+
+  for yearit in 1900..2050:
+    if $yearit in tekst:
+      yearsq.add(yearit)
+
+  yearsq.sort()
+  result = yearsq
+
+
+proc getYearInfoFromSeq(yearsq: seq[int]): string = 
+  #[  ]#
+  var outputst: string
+  if yearsq.len > 0:
+    outputst = "Year-range: " & $yearsq[yearsq.len - 1] & " - " & $yearsq[0] &
+                 "<br>Year-count: " & $yearsq.len
+
+  result = outputst
+
+
+
+proc getYearInfo*(tekst: string): string = 
+  
+  # get year-info from website-text
+  result = getYearInfoFromSeq(getYearsSeqFromText(tekst))
+
+
+
+
 
 when isMainModule:
   #echo genTabId()
@@ -356,5 +390,12 @@ when isMainModule:
   #createNoiseWordsList("noise_sources_english_galact-hist.dat", 0.08, 100)
   #createNoiseWordsList("noise_sources_dutch_generic.dat", 0.3, -1)
   #echo createNoiseWordsList("noise_sources_dutch_generic.dat", 0.3, -1, true)
-  echo noiseVarMessages("sdf", "0.5", "-1")
+  #echo noiseVarMessages("sdf", "0.5", "-1")
+
+  #[ 
+  var sq: seq[int] = getYearsSeqFromText("aap 1998 noot -2007 548..__1976-xx pietje")
+  echo sq
+  echo getYearInfoFromSeq(sq)
+ ]#
+  echo getYearInfo("aap 1998 noot -2007 548..__1976-xx pietje")
 
