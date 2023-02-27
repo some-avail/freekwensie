@@ -1,4 +1,4 @@
-import std/[random, tables, math]
+import std/[random, tables, math, times]
 import strutils, algorithm
 import g_mine, g_templates, g_tools, g_options
 
@@ -8,7 +8,7 @@ import g_mine, g_templates, g_tools, g_options
 
 var
   debugbo: bool = true
-  versionfl: float = 0.1
+  versionfl: float = 0.2
 
 
 # Beware: variable debugbo might be used globally, modularly and procedurally
@@ -40,40 +40,6 @@ proc getIntroText*(tekst: string, sizeit: int): string =
   else:
     result = tekst[0..lenghit - 1]
 
-
-
-proc getTagContent_old(link_or_tekst, startpartst, endpartst: string, 
-                            maxlineit: int): string = 
-  #[ 
-    Retrieve a sequence of content-data between pairs of startpartst 
-    and endpartst. 
-   ]#
-  var
-    datasq, frag_onesq: seq[string]
-    tempst, contentst, list: string
-    itemcountit: int
-  datasq = getDataSequence(link_or_tekst, startpartst, endpartst)
-
-  list = ""
-  if datasq.len > 0:
-    itemcountit = 1
-    for itemst in datasq:
-      echo itemst
-      echo "------------"
-      # parse the data-sequence for the content between > and <
-      frag_onesq = itemst.split('>', 1)
-      tempst = frag_onesq[1]
-      if ('>' in tempst) and ('<' in tempst):
-        contentst = getInnerText2(tempst)
-      else: 
-        contentst = tempst
-
-      if itemcountit <= maxlineit:
-        if contentst != "":
-          list &= contentst & "<br>\p"
-      itemcountit += 1
-    echo "========="
-  result = list
 
 
 
@@ -123,64 +89,7 @@ proc createFreqTableFromWordList*(wordlisq: seq[string], numcolsit, numrowsit: i
   result = resultst
 
 
-#[ 
 
-proc createNoiseWordsList_old(sourcefilest: string, threshold_fractionfl: float = 0.7) =
-  
-  #[
-  threshold_fractionfl: value between 0 and 1; 
-  If in more than 100 * threshold_fractionfl percent of the docs a word appears,
-  then it is added to the noise-list (the below freq-list).
-
-  Noise-words are words that appear in most texts and can be defined as 
-  non-specific to the set of docs. By excluding the noise-words from the frequency-
-  count what remains are the document-specific words.
-  The list can be generic, or for a certain subject-area a specialized 
-  noise-word-list can be created.
-  ]#
-
-
-  var
-    freqlisq, nonfreqlisq: seq[string] = @[]
-    listsq2: seq[seq[string]]
-    filecountit, thresholdit, curfileit: int
-    targetfilest: string
-
-
-  withFile(txt, sourcefilest, fmRead):  # special colon
-    for wlink in txt.lines:
-      if wlink.len > 2:
-        listsq2.add(createSeqOfUniqueWords(getInnerText2(getWebSite(wlink)), 1))
-        log("Processed: " & wlink)
-
-  thresholdit = toInt(round(float(listsq2.len) * threshold_fractionfl))
-  log("listsq2.len = " & $listsq2.len)
-  log("thresholdit = " & $thresholdit)
-
-  curfileit = 1
-
-  for filewordsq in listsq2:
-    for wordst in filewordsq:
-      if wordst notin nonfreqlisq and wordst notin freqlisq:
-        filecountit = 0
-        for filewordsq in listsq2:
-          if wordst in filewordsq:
-            filecountit += 1
-        if filecountit >= thresholdit:   
-          freqlisq.add(wordst)
-        else:
-          nonfreqlisq.add(wordst)
-    echo $curfileit & " of " & $len(listsq2)
-    curfileit += 1
-    log("filewordsq.len = " & $filewordsq.len)
-
-  targetfilest = "noise_words" & sourcefilest[len("noise_sources") .. len(sourcefilest) - 1]
-  log(targetfilest)
-  log("Items in freqlist = " & $freqlisq.len)
-
-  convertSequenceToFile(targetfilest, freqlisq)
-
- ]#
 
 proc createNoiseWordsList*(weblink_or_filest: string, threshold_fractionfl: float,
                             maxlinksit: int, precalc_onlybo: bool = false): string =
@@ -340,14 +249,26 @@ proc noiseVarMessages*(filename, fraction, max_num_of_links: string): string =
     result = messt
 
 
+
+
 proc getYearsSeqFromText(tekst: string): seq[int] = 
   #[Extract year-numbers from tekst and put them in an
-  ordered sequence.  ]#
+  ordered sequence. 
+  Years between 1900 and the current year
+   ]#
 
   var
     yearsq: seq[int]
+    timedt: DateTime
+    timest: string
+    curyearit: int
 
-  for yearit in 1900..2050:
+  # retrieve the current year
+  timedt = now()
+  timest = format(timedt, "yyyy")
+  curyearit = parseInt(timest)
+
+  for yearit in 1900..curyearit:
     if $yearit in tekst:
       yearsq.add(yearit)
 
@@ -355,20 +276,21 @@ proc getYearsSeqFromText(tekst: string): seq[int] =
   result = yearsq
 
 
+
 proc getYearInfoFromSeq(yearsq: seq[int]): string = 
-  #[  ]#
+  #[Make a nice text from the year-info:
+    newest year, oldest year and number of year-numbers]#
   var outputst: string
   if yearsq.len > 0:
     outputst = "Year-range: " & $yearsq[yearsq.len - 1] & " - " & $yearsq[0] &
                  "<br>Year-count: " & $yearsq.len
-
   result = outputst
 
 
 
 proc getYearInfo*(tekst: string): string = 
-  
   # get year-info from website-text
+
   result = getYearInfoFromSeq(getYearsSeqFromText(tekst))
 
 
@@ -397,5 +319,5 @@ when isMainModule:
   echo sq
   echo getYearInfoFromSeq(sq)
  ]#
-  echo getYearInfo("aap 1998 noot -2007 548..__1976-xx pietje")
+  echo getYearInfo("aap 1998 noot jaar2022 -2007 2100 548..__1976-xx pietje")
 

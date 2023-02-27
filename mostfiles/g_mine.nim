@@ -10,7 +10,7 @@ import g_options
 
 
 const
-  versionfl = 0.3
+  versionfl = 0.4
 
 type
   DocType* = enum
@@ -474,10 +474,51 @@ proc removeLongWords(tekst: string, maxwordlengthit: int): string =
   else:
     result = tekst
 
-  
+
+
+
+proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
+                      separatorst: string = ""): string =
+
+  #[ 
+  Generic text-extraction of html-code.
+  Based on getDataSeqDirty(tekst, ">", "<")
+
+  params -1 means: no limits
+
+  ADAP FUT
+  -better clean up of page-breaks etc.
+   ]#
+
+  var
+    datasq, wordsq: seq[string]
+    newtekst, itemst, clippedtekst: string
+    itemcountit: int = 1
+    wlengthit: int
+
+  datasq = getDataSeqDirty(tekst, ">", "<")
+
+  # filter and concatenate elems
+  for elem in datasq:
+    itemst = elem
+    if itemst.len > 0:
+      itemst = removeSingleStrings(itemst, @["&nbsp;", "&nbsp", "\n", "\t","\c", "\c\n" ,"\n ", "\t\n", "\t\c", "\t \n"])
+      if not ('{' in itemst):   # filter out script
+        if maxwordlengthit != -1:
+          newtekst &= removeLongWords(itemst, maxwordlengthit) & separatorst
+        else:
+          newtekst &= itemst & separatorst
+
+
+  newtekst = removeDuplicateStrings(newtekst, @["__"])
+
+  result = newtekst
+
+
 
 
 proc getInnerText2*(tekst: string, maxitemcountit: int = -1, maxwordlengthit: int = -1): string =
+
   #[ 
   Generic text-extraction of html-code.
   Based on getDataSeqDirty(tekst, ">", "<")
@@ -511,7 +552,6 @@ proc getInnerText2*(tekst: string, maxitemcountit: int = -1, maxwordlengthit: in
   newtekst = removeDuplicateStrings(newtekst, @[" ", "\n", "\t","\c", "\c\n" ,"\n ", "\t\n", "\t\c", "\t \n"])
 
   result = newtekst
-
 
 
 
@@ -675,84 +715,6 @@ proc getTitleFromWebsite2*(webaddresst:string): string =
   else:
     result = resultst
 
-
-
-proc getChildLinks_old*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: int, 
-            excludesubstringsq:seq[string]= @[], weblinksq: var seq[array[5, string]]): int = 
-  #[ 
-  Get all the weblinks of the page parentweblinkst and put them in the var 
-  weblinksq of the form @[[parentlink, curdepth, childlink, childtitle, indexnr]]
-  The var weblinksq must be externally created before being called.
-  The proc is recurrent and maxdepthit determines the maximal parsing-depth.
-  MaxDepth 0 means only retrieve the parent, Maxdepth 1 means the (first order) children.
-  Call with curdepth = 1
-
-  Fields of weblinksq:
-  link1, depth, link2, title2, indexnr
-  ADAP HIS:
-  ADAP FUT:
-  -see below
-  ]#
-
-  var 
-    sitest = getWebSite(parentweblinkst)
-    datasq, frag_onesq, frag_twosq, attribsq: seq[string]
-    link_onest, link_twost, templinkst, titlest, parent_titlest: string
-    linkcountit, subcountit: int
-
-
-  datasq = getDataSeqClean(sitest, "<a ", "</a>")
-
-  # if the website is mal-formed get the data dirtyly..
-  if datasq == @[]:
-    #echo "Non-xml acquisition.."
-    datasq = getDataSeqDirty(sitest, "<a ", "</a>")
-
-  echo linknumit
-
- #[ 
-  # future-approach? Then can also get weblink directly
-  datasq = getDataSequence(sitest, "<a ", "</a>") 
- ]#
-
-  linkcountit = 0
-  link_onest = parentweblinkst
-
-  if curdepthit <= 1:
-    parent_titlest = getTitleFromWebsite2(sitest)
-    weblinksq.add(["Parent has no parent", "0", link_onest, parent_titlest, "0"])
-
-  if datasq.len > 0 and maxdepthit > 0:
-    linkcountit = linknumit
-    for itemst in datasq:
-      # parse the data-sequence for title and link2
-      frag_onesq = itemst.split('>', 1)
-      titlest = frag_onesq[1]
-      frag_twosq = frag_onesq[0].split(' ')
-      for attribst in frag_twosq:
-        attribsq = attribst.split('=')
-        if attribsq[0] == "href":
-          templinkst = attribsq[1].strip(chars = {'"'})
-          link_twost = convertWebLinksToAbsolute(templinkst, parentweblinkst)
-
-      if not substringsInString(link_twost, excludesubstringsq):
-        if not linkIsPresent(link_twost, weblinksq):
-          weblinksq.add([link_onest, $curdepthit, link_twost, titlest, $linkcountit])
-          linkcountit += 1
-      #echo link_twost
-
-      # call recurrently
-      try:
-        if curdepthit < maxdepthit:
-          linkcountit = getChildLinks_old(link_twost, maxdepthit, curdepthit + 1, linkcountit, 
-                                          excludesubstringsq, weblinksq)
-
-      except:
-        let errob = getCurrentException()
-        echo "\p******* Unanticipated error ******* \p" 
-        echo repr(errob) & "\p****End exception****\p"
-
-  result = linkcountit
 
 
 

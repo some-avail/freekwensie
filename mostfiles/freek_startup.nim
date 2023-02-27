@@ -46,7 +46,7 @@ from g_html_json import nil
 
 
 const 
-  versionfl:float = 0.75
+  versionfl:float = 0.76
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -231,33 +231,11 @@ routes:
     innervarob["include_in_lnx"] = @"includable"
     innervarob["exclude_from_lnx"] = @"excludable"
 
-#[ 
-    if @"curaction" in ["pasting..", "changing link..", "entering terms.."]:
-      # (re)set the dataseq which will hold the mined weblinks for the specific tabID
-      if datasqta.hasKey(tabidst):
-        datasqta[tabidst] = @[]
-      else:
-        datasqta.add(tabidst, @[])
-
-      # reset the global word-store (to create later global word-freqs)
-      if globwordsqta.hasKey(tabidst):
-        globwordsqta[tabidst] = @[]
-      else:
-        globwordsqta.add(tabidst, @[])
- ]#
 
     if @"curaction" == "pasting..":
       outervarob["pagetitle"] = appnamelongst & appnamesuffikst    
       innervarob["pasted_text"] = $clipob.clipboard_text()
       innervarob["statustext"] = "Pasting ready."
-
-#[ 
-    if @"curaction" == "changing link..":
-      innervarob["statustext"] = "Link changed and updated."
-
-    if @"curaction" == "entering terms..":
-      innervarob["statustext"] = "Search terms entered."
- ]#
 
 
     if @"curaction" == "retrieving..":
@@ -346,7 +324,7 @@ routes:
             resultst &= "</tr>\p"
 
             resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"3\">" & getIntroText(innertekst, introtextsizit) & "</td>\p"
+            resultst &= "<td colspan=\"3\">" & getIntroText(getInnerText3(sitest, 80, "__"), introtextsizit) & "</td>\p"
             resultst &= "</tr>\p"
 
             resultst &= "<tr>\p"
