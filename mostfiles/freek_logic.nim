@@ -38,7 +38,7 @@ proc getIntroText*(tekst: string, sizeit: int): string =
   if lenghit > sizeit:
     result = tekst[0..sizeit]
   else:
-    result = tekst[0..lenghit - 1]
+    result = tekst
 
 
 
@@ -193,7 +193,8 @@ proc createNoiseWordsList*(weblink_or_filest: string, threshold_fractionfl: floa
   result = precalc_logst
 
 
-#[  ]#
+
+
 proc noiseVarMessages*(filename, fraction, max_num_of_links: string): string =
 
   # validation

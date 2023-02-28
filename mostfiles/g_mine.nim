@@ -417,6 +417,9 @@ proc multiplyString(stringst: string, timesit: int): string =
 
 
 proc removeSingleStrings(tekst: string, removablesq: seq[string]): string =
+#[
+  Remove all occurences of the strings in removablesq from the tekst.
+]#
 
   var 
     vtekst: string
@@ -430,7 +433,7 @@ proc removeSingleStrings(tekst: string, removablesq: seq[string]): string =
 
 proc removeDuplicateStrings(tekst: string, removablesq: seq[string]): string =
 #[ 
-&nbsp;
+   In the tekst do replace all multiples of a string with its single, for each string in removablesq.
  ]#
 
   var
@@ -476,8 +479,84 @@ proc removeLongWords(tekst: string, maxwordlengthit: int): string =
 
 
 
-
 proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
+                  separatorst: string = "", maxshortitemsit: int = -1): string =
+
+  #[ 
+  Generic text-extraction of html-code.
+  Based on getDataSeqDirty(tekst, ">", "<")
+
+  Specificly made for extraction of intro-text.
+
+  -maxwordlength avoid huge words that mess up the table-size
+  -separatorst usefull to separate different types of text.
+  -maxshortitemsit to limit short items in below concat-loop, 
+  thereby forwarding to the real text instead of generic menu-items etc.
+
+  params -1 means: no limits
+
+  ---------------
+  items verketen totdat maxshort is bereikt
+    itemcount < maxshort
+  wachten met verketenen tot een lang item is gevonden
+    first_long_item_reachedbo: bool = false
+  dan weer verder gaan met zowel korte als lange items
+  ---------------
+
+
+  ADAP FUT
+  -better clean up of page-breaks etc.
+   ]#
+
+  var
+    datasq, wordsq: seq[string]
+    newtekst, itemst, clippedtekst: string
+    itemcountit: int = 0
+    min_item_lengthit: int = 100
+    first_long_item_reachedbo: bool = false
+
+
+  datasq = getDataSeqDirty(tekst, ">", "<")
+
+  log("starthere")
+  # filter and concatenate elems
+  for elem in datasq:
+    itemst = elem
+    if itemst.len > 0:
+      itemst = removeSingleStrings(itemst, @["&nbsp;", "&nbsp", "\n", "\t","\c"])
+      itemst = removeDuplicateStrings(itemst, @[" "])
+
+      if not ('{' in itemst) and itemst.len > 0:   # filter out script
+
+
+        log(itemst)
+
+        if first_long_item_reachedbo == false:
+          if itemcountit >= maxshortitemsit:
+            if itemst.len >= min_item_lengthit:
+              first_long_item_reachedbo = true
+
+        if itemcountit < maxshortitemsit or first_long_item_reachedbo:
+          if maxwordlengthit != -1:
+            newtekst &= removeLongWords(itemst, maxwordlengthit) & separatorst
+          else:
+            newtekst &= itemst & separatorst
+          log("  added..")
+        else:
+          log("  skipped..")
+        log("  " & $itemst.len)
+
+
+        itemcountit += 1
+
+  newtekst = removeDuplicateStrings(newtekst, @[separatorst])
+
+  result = newtekst
+
+
+
+
+proc getInnerText3_old*(tekst: string, maxwordlengthit: int = -1,
                       separatorst: string = ""): string =
 
   #[ 
@@ -962,7 +1041,7 @@ when isMainModule:
 
 
 #[ ]#
-  # TEST: getInnerText2 or calcWordFrequencies or countWords
+  # TEST: getInnerText2 / 3 or calcWordFrequencies or countWords
   var 
     sitest = getWebSite("https://en.wikipedia.org/wiki/Well-formed_element")
     #sitest = getWebSite("https://www.bibliotecapleyades.net/atlantida_mu/esp_lemuria_11.htm")
@@ -970,7 +1049,8 @@ when isMainModule:
 
   echo "-------------"
   #sitest = "bla>eerste<blubla>tweede<prrrrr>derde<hophop"
-  echo getInnerText2(sitest, -1, 1000)
+  # echo getInnerText2(sitest, -1, 1000)
+  discard getInnerText3(sitest, 80, "__", 15)
   #echo calcWordFrequencies(getInnerText2(sitest), 7, @["pietje", "jantje"], false, 20)
   #echo countWords(getInnerText2(sitest))
   #echo createSeqOfUniqueWords(getInnerText2(sitest), 1)
@@ -991,7 +1071,7 @@ calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[strin
   echo removeDuplicateStrings(st, @["\n ", " ", "\p", "\t"])
  ]#
 
- #echo getWebSite("www.voetbal.com/")
+ # echo getWebSite("www.voetbal.com/")
 
   #echo getTitleFromWebsite2("https://nl.wikipedia.org/wiki/Nim_(spel)")
 
@@ -1003,4 +1083,4 @@ calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[strin
   echo getPartFromWebAddress(weblinkst, addrGrandParent)
 ]#
 
-  echo removeLongWords("kort of iets langer of heeeeeeeeel heel lang", 8)
+  # echo removeLongWords("kort of iets langer of heeeeeeeeel heel lang", 8)

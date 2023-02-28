@@ -35,7 +35,7 @@ ADAP NOW
 
 
 import jester, moustachu, times, json, os, tables, db_sqlite
-import strutils
+import strutils, math
 import nimclipboard/libclipboard
 import freek_loadjson, freek_logic
 import g_database, g_templates,  g_db2json, g_json_plus
@@ -46,7 +46,7 @@ from g_html_json import nil
 
 
 const 
-  versionfl:float = 0.76
+  versionfl:float = 0.77
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -161,8 +161,9 @@ routes:
       linkcountit, setsizeit, setcountit, itemstartit, itemendit, getchildscountit: int
       excludesubsq, includesubsq: seq[string]
       weblinkst, globfreqtablest: string
-      seqcountit: int
+      seqcountit, wordcountit, p_linkcountit: int
       calcglobalfreqsbo: bool = false
+      words_per_linkfl: float
       # skip-list created from file:
       skiplisq: seq[string] = convertFileToSequence(@"sel_noise_words", ">>>")
       # options:
@@ -172,6 +173,7 @@ routes:
       maxheaderitemsit =  parseInt(readOptionFromFile("max-header-items", optValue))
       introtextsizit = parseInt(readOptionFromFile("intro-text-char-number", optValue))
       targetwindowst = readOptionFromFile("target-window", optValue)
+      maxshortitemit = parseInt(readOptionFromFile("max_short_items", optValue))
 
 
     # first version of html, css-sheet, script and json-file
@@ -324,14 +326,20 @@ routes:
             resultst &= "</tr>\p"
 
             resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"3\">" & getIntroText(getInnerText3(sitest, 80, "__"), introtextsizit) & "</td>\p"
+            resultst &= "<td colspan=\"3\">" & getIntroText(getInnerText3(sitest, 80, "__", maxshortitemit), introtextsizit) & "</td>\p"
             resultst &= "</tr>\p"
+
+            wordcountit = countWords(innertekst)
+            p_linkcountit = count(sitest, "<a ")
+            words_per_linkfl = round(float(wordcountit) / float(p_linkcountit))
 
             resultst &= "<tr>\p"
             resultst &= "<td>Depth: " & item[1] & 
-                        "<br>Words: " & $countWords(innertekst) & "</td>\p"
-            resultst &= "<td>Links: " & $count(sitest, "<a ") & 
-                          "<br>Images: " & $count(sitest, "<img ") & "</td>\p"
+                        "<br>Words: " & $wordcountit & "</td>\p"
+            resultst &= "<td>Links: " & $p_linkcountit & 
+                          "<br>Images: " & $count(sitest, "<img ") & 
+                          "<br>Words/link: " & $words_per_linkfl & "</td>\p"
+
             resultst &= "<td>" & getYearInfo(innertekst) & "</td>\p"
             resultst &= "</tr>\p"
 
