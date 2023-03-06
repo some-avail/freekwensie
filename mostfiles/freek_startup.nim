@@ -311,7 +311,7 @@ routes:
             if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, globwordsqta[tabidst])
             resultst &= "<table>\p"
             resultst &= "<tr>\p"
-            resultst &= "<td id=\"first_row_prof_table\" colspan=\"3\">" & child_titlest & "<br>" & item[3] & "</td>\p"
+            resultst &= "<td id=\"first_row_prof_table\" colspan=\"3\">- " & child_titlest & "<br>- " & item[3] & "</td>\p"
             resultst &= "<td id=\"freq_col_prof_table\" rowspan=\"5\">" & freqlist & "</td>\p"
             if @"custom_start" != "" and @"custom_end" != "":
               extra_list = getContentList(sitest, @"custom_start", @"custom_end", docHtml, maxcontentitemsit)

@@ -23,6 +23,7 @@ type
     addrGrandParent
 
 
+# var debugbo: bool = true
 var debugbo: bool = false
 
 template log(messagest: string) =
@@ -495,13 +496,6 @@ proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
 
   params -1 means: no limits
 
-  ---------------
-  items verketen totdat maxshort is bereikt
-    itemcount < maxshort
-  wachten met verketenen tot een lang item is gevonden
-    first_long_item_reachedbo: bool = false
-  dan weer verder gaan met zowel korte als lange items
-  ---------------
 
 
   ADAP FUT
@@ -514,6 +508,7 @@ proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
     itemcountit: int = 0
     min_item_lengthit: int = 100
     first_long_item_reachedbo: bool = false
+    number_foundbo: bool = false
 
 
   datasq = getDataSeqDirty(tekst, ">", "<")
@@ -536,12 +531,20 @@ proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
             if itemst.len >= min_item_lengthit:
               first_long_item_reachedbo = true
 
-        if itemcountit < maxshortitemsit or first_long_item_reachedbo:
+          # Always add dates (based on numbers)
+          if substringsInString(itemst, @["1","2","3","4","5","6","7","8","9","0"]):
+            if itemst.len > 5:
+              if not substringsInString(itemst, @["covid", "COVID", "Covid"]):
+                number_foundbo = true
+
+
+        if itemcountit < maxshortitemsit or first_long_item_reachedbo or number_foundbo:
           if maxwordlengthit != -1:
             newtekst &= removeLongWords(itemst, maxwordlengthit) & separatorst
           else:
             newtekst &= itemst & separatorst
           log("  added..")
+          number_foundbo = false
         else:
           log("  skipped..")
         log("  " & $itemst.len)
@@ -596,7 +599,8 @@ proc getInnerText3_old*(tekst: string, maxwordlengthit: int = -1,
 
 
 
-proc getInnerText2*(tekst: string, maxitemcountit: int = -1, maxwordlengthit: int = -1): string =
+proc getInnerText2*(tekst: string, maxitemcountit: int = -1, 
+                            maxwordlengthit: int = -1): string =
 
   #[ 
   Generic text-extraction of html-code.
@@ -852,6 +856,8 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
       # parse the data-sequence for title and link2
       frag_onesq = itemst.split('>', 1)
       titlest = frag_onesq[1]
+      if '<' in titlest:
+        titlest = getInnerText2(titlest, -1, 100)
       frag_twosq = frag_onesq[0].split(' ')
       for attribst in frag_twosq:
         attribsq = attribst.split('=')
@@ -924,7 +930,7 @@ proc getTagContent*(link_or_tekst, startpartst, endpartst: string): seq[string] 
 
 
 proc enlistSequenceToDoc*(sequensq: seq[string], output_doc: DocType, 
-                          maxlineit: int): string = 
+                          maxlineit: int, widthmakerbo: bool = true): string = 
   # Create a listing-doc from a sequence of string in the desired format DocType
   # with maximum line-size maxlineit.
 
@@ -940,13 +946,22 @@ proc enlistSequenceToDoc*(sequensq: seq[string], output_doc: DocType,
         list &= itemst & "\p"
       itemcountit += 1
 
-  result = list
+  if list == "":
+    result = ""
+  else:
+    if widthmakerbo:
+      if output_doc == docHtml:
+        result = "_______________________<br>\p" & list
+      elif output_doc == docText:
+        result = "_______________________\p" & list
+    else:
+      result = list
 
 
 
 
 proc getHtmlHeaders*(link_or_tekst: string, output_doc: DocType, 
-                  maxlineit: int): string = 
+                  maxlineit: int, widthmakerbo: bool = true): string = 
 
   var
     datasq, frag_onesq: seq[string]
@@ -982,14 +997,22 @@ proc getHtmlHeaders*(link_or_tekst: string, output_doc: DocType,
               if contentst.len > 0:
 
                 if output_doc == docHtml:
-                  list &= multiplyString("&nbsp", 3*(it - 1)) & contentst & "<br>\p"
+                  list &= multiplyString("&nbsp", 3*(it - 1)) & "- " & contentst & "<br>\p"
                 elif output_doc == docText:
-                  list &= multiplyString(" ", 3*(it - 1)) & contentst & "\p"                
-
+                  list &= multiplyString(" ", 3*(it - 1)) & "- " & contentst & "\p"                
             itemcountit += 1
 
-  result = list
 
+  if list == "":
+    result = ""
+  else:
+    if widthmakerbo:
+      if output_doc == docHtml:
+        result = "_________________________<br>\p" & list
+      elif output_doc == docText:
+        result = "_________________________\p" & list
+    else:
+      result = list
 
 
 
@@ -1043,7 +1066,8 @@ when isMainModule:
 #[ ]#
   # TEST: getInnerText2 / 3 or calcWordFrequencies or countWords
   var 
-    sitest = getWebSite("https://en.wikipedia.org/wiki/Well-formed_element")
+    # sitest = getWebSite("https://en.wikipedia.org/wiki/Well-formed_element")
+    sitest = getWebSite("https://www.zerohedge.com/weather/winter-may-finally-arrive-new-york-city-braces-snowstorm")
     #sitest = getWebSite("https://www.bibliotecapleyades.net/atlantida_mu/esp_lemuria_11.htm")
     #sitest = getWebSite("https://www.nrc.nl/nieuws/2022/12/26/oostenrijk-het-russische-vliegdekschip-in-europa-a4152600")
 
