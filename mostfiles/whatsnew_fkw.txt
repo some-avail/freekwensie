@@ -1,5 +1,13 @@
 What's new in:
 
+### 0.78
+-removed oversized table-bug(s)
+-added years-metrics to assess some time-info. Date-metrics are a future thing
+-improved intro-text with underscore-separators
+-added words-per-link metric to assess if focus is on text or referencing.
+-various small layout-improvements.
+
+
 ### 0.75
 -noise-word-usage in the frequency-lists.
   * select a noise-word-file to filtered frequently used (hence non-specific) words.

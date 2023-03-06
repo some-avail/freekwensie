@@ -46,7 +46,7 @@ from g_html_json import nil
 
 
 const 
-  versionfl:float = 0.77
+  versionfl:float = 0.78
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -139,7 +139,7 @@ routes:
                                                         @["default"], true)
 
     innervarob["sel_noise_words"] = g_html_json.setDropDown(initialjnob, "sel_noise_words", 
-                                              "noise_words_english_generic.dat", 5)
+                                              "noise_words_english_generic.dat", 10)
 
     resp showPage(innervarob, outervarob)
 
@@ -228,7 +228,7 @@ routes:
 
 
     innervarob["sel_noise_words"] = g_html_json.setDropDown(gui_jnob, "sel_noise_words", 
-                                                              @"sel_noise_words", 5)
+                                                              @"sel_noise_words", 10)
 
     innervarob["include_in_lnx"] = @"includable"
     innervarob["exclude_from_lnx"] = @"excludable"
