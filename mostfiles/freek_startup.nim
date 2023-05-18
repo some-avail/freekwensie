@@ -134,9 +134,9 @@ routes:
                                                     @["default"])
     innervarob["set_nr"] = "1"
 
+    innervarob["sel_alt_freqs"] = g_html_json.setDropDown(initialjnob, "sel_alt_freqs", "0", 1)
     innervarob["pasted_text"] = readOptionFromFile("pastebox-default", optValue)
-    innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(initialjnob, "check_globfreqlist", 
-                                                        @["default"], true)
+    innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(initialjnob, "check_globfreqlist", @["default"], true)
 
     innervarob["sel_noise_words"] = g_html_json.setDropDown(initialjnob, "sel_noise_words", 
                                               "noise_words_english_generic.dat", 10)
@@ -220,6 +220,7 @@ routes:
     innervarob["pasted_text"] = @"pasted_link"
     innervarob["statustext"] = "..."
     innervarob["set_nr"] = @"set_nr"
+    innervarob["sel_alt_freqs"] = g_html_json.setDropDown(gui_jnob, "sel_alt_freqs", @"sel_alt_freqs", 1)
     innervarob["startpart"] = @"custom_start"
     innervarob["endpart"] = @"custom_end"
     innervarob["seekbox"] = @"seekbox"
@@ -260,9 +261,13 @@ routes:
       includesubsq = split(@"includable", ",,")
       excludesubsq = split(@"excludable", ",,") & getValList(readOptionFromFile("subs-not-in-childlinks", optValueList))
       if sitest != "":
+        echo "\p-----------------------------------------------------"
+        echo "Retrieving child-links from: " & weblinkst
         getchildscountit = getChildLinks(weblinkst, parseint(@"sel_parsing_depth"), 1, 1, 
                                           includesubsq, excludesubsq ,datasqta[tabidst])
+        echo $getchildscountit & " sublinks retrieved.."
         if @"chkshow_preresults" == "chkshow_preresults":
+          echo "Rendering html-table.."
           resultst = "<table id=\"weblinks_table\">\p"
           for item in datasqta[tabidst]:
             resultst &= "<tr>\p"
@@ -281,9 +286,11 @@ routes:
           innervarob["results_list"] = resultst
 
         innervarob["statustext"] = $len(datasqta[tabidst]) & " weblinks retrieved.."
+        echo "Rendering complete!"
       else:
         innervarob["statustext"] = "Could not acquire website.."
-
+        echo "No rendering of sublinks requested. Ready"
+      echo "----------------------------------"
 
 
     if @"curaction" == "profiling..":
@@ -300,14 +307,15 @@ routes:
       itemendit  = (setcountit + 1) * setsizeit
       nav_noticest = "<center>" & button_prevst & "Results from " & $itemstartit & " thru " & $itemendit & button_nekst & "</center><br><br>\p"
 
+      echo "\p--------------start profiling-------------------------"
       for item in datasqta[tabidst]:
         if linkcountit >= itemstartit and linkcountit <= itemendit:        
           sitest = getWebSite(item[2])
           innertekst = getInnerText2(sitest, -1, 80)
           child_titlest = getTitleFromWebsite2(item[2])
           if sitest != "":
-            echo "Retrieving nr... " & $item[4]
-            freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit)
+            echo "Profiling nr... " & $item[4]
+            freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit, parseint(@"sel_alt_freqs"))
             if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, globwordsqta[tabidst])
             resultst &= "<table>\p"
             resultst &= "<tr>\p"
@@ -352,6 +360,9 @@ routes:
             resultst &= "</table><br><br>\p"
 
         linkcountit += 1
+
+      echo "\pRendering tables..."
+      echo "--------------end profiling-------------------------\p"
 
 
       if calcglobalfreqsbo:

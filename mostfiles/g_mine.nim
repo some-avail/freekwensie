@@ -5,6 +5,7 @@
 
 import strutils, httpClient, algorithm, sequtils
 import tables
+import unicode
 import g_options
 #import os, times
 
@@ -470,7 +471,7 @@ proc removeLongWords(tekst: string, maxwordlengthit: int): string =
     wlengthit: int
 
   if maxwordlengthit != -1:
-    wordsq = tekst.splitWhitespace()
+    wordsq = strutils.splitWhitespace(tekst)
     for word in wordsq:
       if word.len <= maxwordlengthit:
         clippedtekst &= word & " "
@@ -667,11 +668,17 @@ proc createSeqOfUniqueWords*(input_tekst:string, wordlengthit:int): seq[string] 
 
 
 proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string], 
-                    useHtmlBreaksbo:bool, topcountit: int = 10000):string = 
+                    useHtmlBreaksbo:bool, topcountit: int = 10000, altfreqit: int = 11): string = 
   #[ 
   Create a list of word-frequencies in html (useHtmlBreaksbo = true) or normal text.
-  Only add words with a length > wordlenghit
+  Only add words with a length > wordlenghit.
+  Dont add words that are in the skiplistsq.
   Limit the list-length to topcountit (like top 10)
+  Use an alternate frequency-counting when integer > 0:
+    0 = normal counting
+    1 = reduce all letters to lower case
+    10 = 1 = clip tailing s (to aggregate singular and plural)
+    11 = lower-case and no s's
    ]#
 
   var
@@ -685,7 +692,14 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
     tempst = removeSingleStrings(wordst, @[" ", "\p", "\t", "\c"])
     if len(tempst) >= wordlengthit:
       if not (tempst in skiplistsq):
-        allwordssq.add(tempst)
+        if altfreqit == 0:
+          allwordssq.add(tempst)
+        elif altfreqit == 1:
+          allwordssq.add(toLower(tempst))
+        elif altfreqit == 10:
+          allwordssq.add(strip(tempst, leading = false, chars = {'s'}))
+        elif altfreqit == 11:
+          allwordssq.add(tempst.toLower.strip(leading = false, chars = {'s'}))
 
 
   # echo allwordssq
@@ -825,7 +839,7 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
   var 
     sitest = getWebSite(parentweblinkst)
     datasq, frag_onesq, frag_twosq, attribsq: seq[string]
-    link_onest, link_twost, templinkst, titlest, parent_titlest: string
+    link_onest, link_twost, templinkst, titlest, parent_titlest, pre_titlest, post_titlest: string
     linkcountit, subcountit: int
 
 
@@ -852,12 +866,19 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
 
   if datasq.len > 0 and maxdepthit > 0:
     linkcountit = linknumit
+
     for itemst in datasq:
+
       # parse the data-sequence for title and link2
       frag_onesq = itemst.split('>', 1)
-      titlest = frag_onesq[1]
-      if '<' in titlest:
-        titlest = getInnerText2(titlest, -1, 100)
+
+      pre_titlest = frag_onesq[1]
+      if '<' in pre_titlest and '>' in pre_titlest:        
+        titlest = getInnerText2(pre_titlest, -1, 100)
+      else:
+        titlest = pre_titlest
+      # titlest = pre_titlest
+
       frag_twosq = frag_onesq[0].split(' ')
       for attribst in frag_twosq:
         attribsq = attribst.split('=')
@@ -889,7 +910,7 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
 
 proc countWords*(tekst: string): int =
   var wordsq: seq[string]
-  wordsq = tekst.splitWhitespace()
+  wordsq = strutils.splitWhitespace(tekst)
   result = wordsq.len
 
 

@@ -5,8 +5,8 @@ FKW is a website-profiler. Starting from a parent-weblink one can retrieve all t
 
 INSTALLATION ON WINDOWS
 - unzip the file, place it somewhere in your user-folder. (i myself have in my user-folder a subfolder "applications" in which i have placed ready-to-run apps).
-- run the executable "freek_startup".
-- add a permission to the firewall or other barriers that microsoft throws up against independent non-commercial developers.
+- run the executable "freek_startup.exe".
+- add a permission to the firewall or other barriers that are thrown up against "untrusted" software.
 - To access the web-server you just started (and thus start the app), type in your browser: http://localhost:5200/freek
 
 

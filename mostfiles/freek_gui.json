@@ -95,6 +95,18 @@
                 {"real-value": "100", "show-value": "100"}
               ]
             },
+          "sel_alt_freqs":
+          {
+            "ddlab": "Freqs:",
+            "ddvalues": 
+              [
+                {"real-value": "0", "show-value": "Normal counting"},
+                {"real-value": "1", "show-value": "All lower case"},
+                {"real-value": "10", "show-value": "Clip tailing -s"},
+                {"real-value": "11", "show-value": "L.case + clipping"}
+              ]
+            },
+
           "sel_noise_words":
           {
             "ddlab": "Pick noise-filter(s):",
