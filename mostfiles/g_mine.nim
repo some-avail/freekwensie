@@ -666,7 +666,6 @@ proc createSeqOfUniqueWords*(input_tekst:string, wordlengthit:int): seq[string] 
 
 
 
-
 proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string], 
                     useHtmlBreaksbo:bool, topcountit: int = 10000, altfreqit: int = 11): string = 
   #[ 
@@ -688,18 +687,32 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
 
 
   wordsq = input_tekst.split(" ")
-  for wordst in wordsq:
-    tempst = removeSingleStrings(wordst, @[" ", "\p", "\t", "\c"])
-    if len(tempst) >= wordlengthit:
-      if not (tempst in skiplistsq):
-        if altfreqit == 0:
-          allwordssq.add(tempst)
-        elif altfreqit == 1:
-          allwordssq.add(toLower(tempst))
-        elif altfreqit == 10:
-          allwordssq.add(strip(tempst, leading = false, chars = {'s'}))
-        elif altfreqit == 11:
-          allwordssq.add(tempst.toLower.strip(leading = false, chars = {'s'}))
+
+
+  # using template for performance 
+  template prepareWordAddition(doThis: untyped) =
+    # walk thru the words to add words under certain conditions to allwordssq
+    for wordst in wordsq:
+      tempst = removeSingleStrings(wordst, @["\p", "\t", "\c"]).strip(leading = false, 
+                                  chars = {',',':'})
+      if len(tempst) >= wordlengthit:
+        if not (tempst in skiplistsq):
+          doThis
+
+
+  # implement template depending of type of freq-counting
+  if altfreqit == 0:
+    prepareWordAddition:
+      allwordssq.add(tempst)
+  elif altfreqit == 1:
+    prepareWordAddition:
+      allwordssq.add(toLower(tempst))
+  elif altfreqit == 10:
+    prepareWordAddition:
+      allwordssq.add(strip(tempst, leading = false, chars = {'s'}))
+  elif altfreqit == 11:
+    prepareWordAddition:
+      allwordssq.add(tempst.toLower.strip(leading = false, chars = {'s'}))
 
 
   # echo allwordssq
@@ -723,13 +736,60 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
 
 
 
+
 proc calcCumulFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string],
+                              altfreqit: int = 11, globwordsq: var seq[string]) = 
+
+  #[ 
+  Only add words with a length > wordlenghit
+   ]#
+
+  var
+    wordsq: seq[string]
+    tempst:string
+
+
+  wordsq = input_tekst.split(" ")
+
+
+  # for wordst in wordsq:
+  #   tempst = removeSingleStrings(wordst, @["\p", "\t", "\c"])
+  #   if len(tempst) >= wordlengthit:
+  #     if not (tempst in skiplistsq):
+  #       globwordsq.add(tempst)
+
+
+  # using template for performance 
+  template prepareWordAddition(doThis: untyped) =
+    # walk thru the words to add words under certain conditions to allwordssq
+    for wordst in wordsq:
+      tempst = removeSingleStrings(wordst, @["\p", "\t", "\c"]).strip(leading = false, 
+                                  chars = {',',':'})
+      if len(tempst) >= wordlengthit:
+        if not (tempst in skiplistsq):
+          doThis
+
+  # implement template depending of type of freq-counting
+  if altfreqit == 0:
+    prepareWordAddition:
+      globwordsq.add(tempst)
+  elif altfreqit == 1:
+    prepareWordAddition:
+      globwordsq.add(toLower(tempst))
+  elif altfreqit == 10:
+    prepareWordAddition:
+      globwordsq.add(strip(tempst, leading = false, chars = {'s'}))
+  elif altfreqit == 11:
+    prepareWordAddition:
+      globwordsq.add(tempst.toLower.strip(leading = false, chars = {'s'}))
+
+
+
+
+proc calcCumulFrequencies_old*(input_tekst:string, wordlengthit:int, skiplistsq: seq[string],
                               globwordsq: var seq[string]) = 
 
   #[ 
-  Possible future addition to add cumulative freqs.
-  I may also abort this path and implement the cumulatives thru the planned later 
-  database-implementation.
   Only add words with a length > wordlenghit
    ]#
 
@@ -740,7 +800,7 @@ proc calcCumulFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq
 
   wordsq = input_tekst.split(" ")
   for wordst in wordsq:
-    tempst = removeSingleStrings(wordst, @[" ", "\p", "\t", "\c"])
+    tempst = removeSingleStrings(wordst, @["\p", "\t", "\c"])
     if len(tempst) >= wordlengthit:
       if not (tempst in skiplistsq):
         globwordsq.add(tempst)

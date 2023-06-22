@@ -316,7 +316,7 @@ routes:
           if sitest != "":
             echo "Profiling nr... " & $item[4]
             freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit, parseint(@"sel_alt_freqs"))
-            if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, globwordsqta[tabidst])
+            if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, parseint(@"sel_alt_freqs"), globwordsqta[tabidst])
             resultst &= "<table>\p"
             resultst &= "<tr>\p"
             resultst &= "<td id=\"first_row_prof_table\" colspan=\"3\">- " & child_titlest & "<br>- " & item[3] & "</td>\p"
