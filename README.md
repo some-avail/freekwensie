@@ -1,6 +1,6 @@
 ## Freekwensie - website-profiler
 
-![screenshot_01.png](mostfiles/pictures/screenshot_01.png)
+![01](mostfiles/pictures/01_wiki_flower_profiled.png)
 
 [See below for more screenshots](#more-screenshots)
 
