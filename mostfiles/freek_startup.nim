@@ -46,7 +46,7 @@ from g_html_json import nil
 
 
 const 
-  versionfl:float = 0.78
+  versionfl:float = 0.79
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
