@@ -92,7 +92,9 @@
                 {"real-value": "30", "show-value": "30"},
                 {"real-value": "40", "show-value": "40"},
                 {"real-value": "50", "show-value": "50"},
-                {"real-value": "100", "show-value": "100"}
+                {"real-value": "100", "show-value": "100"},
+                {"real-value": "500", "show-value": "500"},
+                {"real-value": "1000", "show-value": "1000"}
               ]
             },
           "sel_alt_freqs":
