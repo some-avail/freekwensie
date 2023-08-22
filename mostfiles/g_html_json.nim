@@ -643,8 +643,7 @@ Sample output:
 
 
 
-proc setDatalist*(jnob: JsonNode, dropdownnamest, selected_valuest: string, 
-                    sizeit: int):string = 
+proc setDatalist*(jnob: JsonNode, datalistnamest, currentvalst, placeholdervalst: string):string = 
 
 #[ 
 UNIT INFO:
@@ -661,56 +660,50 @@ ADAP HIS:
 Sample output:
 
 <label for="mylist">Pick an option:</label>
-<input  list="options" id="mylist" name="mylist" onchange="mylist_onchange"/>
+<input  list="options" id="mylist" name="mylist" onchange="mylist_onchange" placeholder=greyval/>
 <datalist id="options">
   <option value="1">This</option>
   <option value="2">That</option>
   <option value="3">Those</option>
 </datalist>
-
-
-Old example of the select-element:
-<span ><label for="dropdownname_01">Some label:</label></span>
-<select id="dropdownname_01" name="dropdownname_01" size="1" onchange="dropdownname_01_onchange">
-<option value="some realvalue">this value is shown</option>
-<option value="second realvalue">second value is shown</option>
-<option value="third realvalue">third value is shown</option>
-</select>
  ]#
 
   var
-    dropdown_list, dropdown_html: string
+    datalist_itemst, datalist_htmlst: string
     valIDst, valuest: string
     namest, labelst: string
 
 
   var foundjnob: JsonNode = %*{}
-  g_json_plus.getDeepNodeFromKey(dropdownnamest, jnob, foundjnob)
+  g_json_plus.getDeepNodeFromKey(datalistnamest, jnob, foundjnob)
 
 
-  namest = dropdownnamest
-  labelst = newlang(foundjnob["ddlab"].getStr())  # translated
-  var valuelistsq = foundjnob["ddvalues"].getElems()   # values not translated for now
+  namest = datalistnamest
+  labelst = newlang(foundjnob["dl_lab"].getStr())  # translated
+  var valuelistsq = foundjnob["dl_values"].getElems()   # values not translated for now
 
 
   for item in valuelistsq:
     valIDst = item["real-value"].getStr()
     valuest = item["show-value"].getStr()
 
-
-    if valIDst == selected_valuest:
-      dropdown_list &= "<option value=\"" & valIDst & "\" selected>" & valuest & "</option>\p"
-    else:
-      dropdown_list &= "<option value=\"" & valIDst & "\">" & valuest & "</option>\p"
+    datalist_itemst &= "<option value=\"" & valIDst & "\">" & valuest & "</option>\p"
 
 
-  dropdown_html = "<span ><label for=\"" & namest & "\">" & labelst & "</label></span>\p"
-  # dropdown_html &= "<select id=\"" & namest & "\" name=\"" & namest & "\">\p"
-  dropdown_html &= "<select id=\"" & namest & "\" name=\"" & namest & "\" size=\"" & 
-                      $sizeit & "\" onchange=\"" & namest & "_onchange()\">\p"
-  dropdown_html &= dropdown_list
-  dropdown_html &= "</select>\p"
+  datalist_htmlst = "<span ><label for=\"" & namest & "\">" & labelst & "</label></span>\p"
+  datalist_htmlst &= "<input list=\"" & namest & "list" & "\" id=\"" & namest & "\" name=\"" & namest &  "\" onchange=\"" & namest & "_onchange()\" value=\"" & currentvalst  &  "\" placeholder=\"" & placeholdervalst & "\">\p"
+  datalist_htmlst &= "<datalist id=\"" & namest & "list" & "\">\p"
+  datalist_htmlst &= datalist_itemst
+  datalist_htmlst &= "</datalist>\p"
 
+
+# <label for="mylist">Pick an option:</label>
+# <input  list="options" id="mylist" name="mylist" onchange="mylist_onchange" placeholder=greyval/>
+# <datalist id="options">
+#   <option value="1">This</option>
+#   <option value="2">That</option>
+#   <option value="3">Those</option>
+# </datalist>
 
 # <span ><label for="dropdownname_01">Some label:</label></span>
 # <select id="dropdownname_01" name="dropdownname_01" size="1" onchange="dropdownname_01_onchange">
@@ -719,7 +712,7 @@ Old example of the select-element:
 # <option value="third realvalue">third value is shown</option>
 # </select>
 
-  return dropdown_html
+  result = datalist_htmlst
 
 
 
@@ -733,9 +726,10 @@ when isMainModule:
   # freek_loadjson.setGuiJsonNode("freek")
 
   # echo setRadioButtons(freek_loadjson.gui_jnob, "radiosetexample", "")
-  echo setCheckBoxSet(freek_loadjson.readInitialNode("freek"), "checksetexample", @["default"], true)
+  # echo setCheckBoxSet(freek_loadjson.readInitialNode("freek"), "checksetexample", @["default"], true)
 
   echo "============================"
+  echo setDatalist(freek_loadjson.readInitialNode("freek"), "dali_something", "default", "")
 #  echo setDropDown(freek_loadjson.getGuiJsonNode("freek"), "dropdownname_01", "second realvalue", 1)
 
   # echo setRadioButtons(freek_loadjson.getGuiJsonNode("freek"), "radiosetexample", "rbut3")

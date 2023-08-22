@@ -40,11 +40,15 @@ comment
 arguments---none
 #target#
 #config_dir#
-freek_settings.conf
 noise_sources_french_generic.dat
 noise_sources_russian_generic.dat
 noise_words_french_generic.dat
 noise_words_russian_generic.dat
+restart_freekwensie_sh
+freekwensie_sh
+>----------------------------------<
+non-handled:
+freek_settings.conf
 >----------------------------------<
 #END-OF-BLOCKS
 

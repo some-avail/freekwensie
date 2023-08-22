@@ -11,7 +11,7 @@ import g_options
 
 
 const
-  versionfl = 0.4
+  versionfl = 0.42
 
 type
   DocType* = enum
@@ -510,6 +510,8 @@ proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
     min_item_lengthit: int = 100
     first_long_item_reachedbo: bool = false
     number_foundbo: bool = false
+    number_countit: int = 0
+    # interpunction_reachedbo: bool = false
 
 
   datasq = getDataSeqDirty(tekst, ">", "<")
@@ -522,7 +524,7 @@ proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
       itemst = removeSingleStrings(itemst, @["&nbsp;", "&nbsp", "\n", "\t","\c"])
       itemst = removeDuplicateStrings(itemst, @[" "])
 
-      if not ('{' in itemst) and itemst.len > 0:   # filter out script
+      if not ('{' in itemst or '=' in itemst) and itemst.len > 0:   # filter out script
 
 
         log(itemst)
@@ -532,11 +534,18 @@ proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
             if itemst.len >= min_item_lengthit:
               first_long_item_reachedbo = true
 
+        # if interpunction_reachedbo == false:
+        #   if itemcountit >= maxshortitemsit:
+        #     if substringsInString(itemst, @[","]):
+        #       interpunction_reachedbo = true
+
+
           # Always add dates (based on numbers)
           if substringsInString(itemst, @["1","2","3","4","5","6","7","8","9","0"]):
             if itemst.len > 5:
-              if not substringsInString(itemst, @["covid", "COVID", "Covid"]):
+              if number_countit < 5:
                 number_foundbo = true
+              number_countit += 1
 
 
         if itemcountit < maxshortitemsit or first_long_item_reachedbo or number_foundbo:

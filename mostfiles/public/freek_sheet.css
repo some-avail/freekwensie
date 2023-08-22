@@ -15,7 +15,11 @@ textarea {
   height: 17px;
 }
 
-#pasted_link {
+#dali_pasted_link {
+  width: 610px;  
+}
+
+#pasted_link  {
   width: 610px;  
 }
 
@@ -28,7 +32,12 @@ textarea {
   width: 555px;
 }
 
-textarea.txa_start_end{
+/*textarea.txa_start_end{
+  margin-left: 5px;
+  width: 110px;
+}*/
+
+#dali_expert_start, #dali_expert_end {
   margin-left: 5px;
   width: 110px;
 }

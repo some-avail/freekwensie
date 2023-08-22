@@ -43,60 +43,30 @@ proc split2*(st: string, sepst: string, maxsplit: int = -1): seq[string] =
 
   
 
-proc convertFileToSequence*(filepathst, skipst: string): seq[string] = 
-
-#[ 
-  Convert a file to a Nim-sequence.
-  Skip lines with the value skipst.
- ]#
-
-
-  var lisq: seq[string]
-
-  withFile(txt, filepathst, fmRead):  # special colon
-    for line in txt.lines:
-      #echo line
-      if line.len > 0:
-        if line.len < skipst.len:
-          lisq.add(line)
-        else:
-          if line[0..skipst.len - 1] != skipst:
-            lisq.add(line)
-
-  result = lisq
-
-
-
-
-proc convertMultFilesToSeq*(filepathsq: seq[string], skipst: string): seq[string] = 
-
-#[ 
-  Convert a file to a Nim-sequence.
-  Skip lines with the value skipst.
- ]#
-
-  var lisq: seq[string]
-
-  for filest in filepathsq:
-    withFile(txt, filest, fmRead):  # special colon
-      for line in txt.lines:
-        #echo line
-        if line.len > 0:
-          if line.len < skipst.len:
-            lisq.add(line)
-          else:
-            if line[0..skipst.len - 1] != skipst:
-              lisq.add(line)
-
-  result = lisq
-
-
 
 proc convertSequenceToFile*(filepathst: string, lisq: seq[string]) = 
   
-  withFile(txt, filepathst, fmWrite):  # special colon
+  withFile(txtfl, filepathst, fmWrite):  # special colon
     for item in lisq:
-      txt.writeLine(item)
+      txtfl.writeLine(item)
+
+
+proc zipTwoSeqsToOne*(firstsq: seq[string], secondsq: seq[string] = @[]): seq[array[2, string]] = 
+  var 
+    newSeq: seq[array[2, string]]
+    countit: int = 0
+
+  if secondsq == @[]:
+    for elemst in firstsq:
+      newSeq.add([elemst, elemst])
+  else:
+    for elemst in firstsq:
+      newSeq.add([elemst, secondsq[countit]])
+      countit += 1
+
+  result = newSeq
+
+
 
 
 
@@ -105,9 +75,6 @@ when isMainModule:
   #echo split2("do Select after this", "SELECT")
 
 
-  #echo convertFileToSequence("fq_noise_word.dat", ">>>")
-  echo convertMultFilesToSeq(@["noise_words_dutch_generic.dat", "noise_words_english_generic.dat"], ">>>")
-
   #[ 
   var skiplistsq = @["through", "Through", "between", "because", "various", "against", 
                   "important", "something", "another", "themselves", "currently",
@@ -115,3 +82,6 @@ when isMainModule:
 
   convertSequenceToFile("fq_noise_word.dat", skiplistsq)
  ]#
+
+ echo zipTwoSeqsToOne(@["1","2","3"], @["a","b","c"])
+

@@ -39,14 +39,14 @@ import strutils, math
 import nimclipboard/libclipboard
 import freek_loadjson, freek_logic
 import g_database, g_templates,  g_db2json, g_json_plus
-import g_mine, g_options, g_cookie, g_tools
-from g_html_json import nil
-
+import g_mine, g_options, g_cookie, g_tools, g_disk2nim
+# from g_html_json import nil
+import g_html_json
 
 
 
 const 
-  versionfl:float = 0.79
+  versionfl:float = 0.801
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -135,7 +135,13 @@ routes:
     innervarob["set_nr"] = "1"
 
     innervarob["sel_alt_freqs"] = g_html_json.setDropDown(initialjnob, "sel_alt_freqs", "0", 1)
-    innervarob["pasted_text"] = readOptionFromFile("pastebox-default", optValue)
+    # innervarob["pasted_link"] = readOptionFromFile("pastebox-default", optValue)
+    innervarob["pasted_link"] = setDatalist(initialjnob, "pasted_link", readOptionFromFile("pastebox-default", optValue), "")
+
+    innervarob["dali_expert_start"] = setDatalist(initialjnob, "dali_expert_start", "", "")
+    innervarob["dali_expert_end"] = setDatalist(initialjnob, "dali_expert_end", "", "")
+
+
     innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(initialjnob, "check_globfreqlist", @["default"], true)
 
     innervarob["sel_noise_words"] = g_html_json.setDropDown(initialjnob, "sel_noise_words", 
@@ -217,12 +223,16 @@ routes:
     innervarob["check_show"] = g_html_json.setCheckBoxSet(gui_jnob, "check_show_pre-results", 
                                                     @[@"chkshow_preresults"])
 
-    innervarob["pasted_text"] = @"pasted_link"
+    # innervarob["pasted_link"] = @"pasted_link"
+    innervarob["pasted_link"] = setDatalist(gui_jnob, "pasted_link", @"pasted_link", "")
+
     innervarob["statustext"] = "..."
     innervarob["set_nr"] = @"set_nr"
     innervarob["sel_alt_freqs"] = g_html_json.setDropDown(gui_jnob, "sel_alt_freqs", @"sel_alt_freqs", 1)
-    innervarob["startpart"] = @"custom_start"
-    innervarob["endpart"] = @"custom_end"
+
+    innervarob["dali_expert_start"] = setDatalist(gui_jnob, "dali_expert_start", replace(@"dali_expert_start", "\"","&quot;"), "")
+    innervarob["dali_expert_end"] = setDatalist(gui_jnob, "dali_expert_end", replace(@"dali_expert_end", "\"","&quot;"), "")
+
     innervarob["seekbox"] = @"seekbox"
     innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(gui_jnob, "check_globfreqlist", 
                                                     @[@"chkCalcGlobFreqs"], true)
@@ -237,7 +247,8 @@ routes:
 
     if @"curaction" == "pasting..":
       outervarob["pagetitle"] = appnamelongst & appnamesuffikst    
-      innervarob["pasted_text"] = $clipob.clipboard_text()
+      innervarob["pasted_link"] = setDatalist(gui_jnob, "pasted_link", $clipob.clipboard_text(), "")
+
       innervarob["statustext"] = "Pasting ready."
 
 
@@ -294,86 +305,89 @@ routes:
 
 
     if @"curaction" == "profiling..":
-      if @"chkCalcGlobFreqs" == "chkCalcGlobFreqs": calcglobalfreqsbo = true
-      button_nekst = "<button name=\"butNext\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getNextSet()\">Next set</button>"
-      button_prevst = "<button name=\"butPrev\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getPrevSet()\">Previous set</button>"
-      weblinkst = @"pasted_link" & createSearchString(@"seekbox")      
-      parent_titlest = getTitleFromWebsite2(weblinkst)
-      outervarob["pagetitle"] = appnamebriefst & "_" & parent_titlest & "  -- " & appnamenormalst
-      linkcountit = 1
-      setsizeit = parseint(@"sel_number_results")
-      setcountit = parseint(@"set_nr") - 1
-      itemstartit = (setcountit * setsizeit) + 1
-      itemendit  = (setcountit + 1) * setsizeit
-      nav_noticest = "<center>" & button_prevst & "Results from " & $itemstartit & " thru " & $itemendit & button_nekst & "</center><br><br>\p"
+      if $innervarob["tab_id"] != "" and datasqta.hasKey(tabidst):
+        if @"chkCalcGlobFreqs" == "chkCalcGlobFreqs": calcglobalfreqsbo = true
+        button_nekst = "<button name=\"butNext\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getNextSet()\">Next set</button>"
+        button_prevst = "<button name=\"butPrev\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getPrevSet()\">Previous set</button>"
+        weblinkst = @"pasted_link" & createSearchString(@"seekbox")      
+        parent_titlest = getTitleFromWebsite2(weblinkst)
+        outervarob["pagetitle"] = appnamebriefst & "_" & parent_titlest & "  -- " & appnamenormalst
+        linkcountit = 1
+        setsizeit = parseint(@"sel_number_results")
+        setcountit = parseint(@"set_nr") - 1
+        itemstartit = (setcountit * setsizeit) + 1
+        itemendit  = (setcountit + 1) * setsizeit
+        nav_noticest = "<center>" & button_prevst & "Results from " & $itemstartit & " thru " & $itemendit & button_nekst & "</center><br><br>\p"
 
-      echo "\p--------------start profiling-------------------------"
-      for item in datasqta[tabidst]:
-        if linkcountit >= itemstartit and linkcountit <= itemendit:        
-          sitest = getWebSite(item[2])
-          innertekst = getInnerText2(sitest, -1, 80)
-          child_titlest = getTitleFromWebsite2(item[2])
-          if sitest != "":
-            echo "Profiling nr... " & $item[4]
-            freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit, parseint(@"sel_alt_freqs"))
-            if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, parseint(@"sel_alt_freqs"), globwordsqta[tabidst])
-            resultst &= "<table>\p"
-            resultst &= "<tr>\p"
-            resultst &= "<td id=\"first_row_prof_table\" colspan=\"3\">- " & child_titlest & "<br>- " & item[3] & "</td>\p"
-            resultst &= "<td id=\"freq_col_prof_table\" rowspan=\"5\">" & freqlist & "</td>\p"
-            if @"custom_start" != "" and @"custom_end" != "":
-              extra_list = getContentList(sitest, @"custom_start", @"custom_end", docHtml, maxcontentitemsit)
-            else:
-              extra_list = getHtmlHeaders(sitest, docHtml, maxheaderitemsit)
+        echo "\p--------------start profiling-------------------------"
+        for item in datasqta[tabidst]:
+          if linkcountit >= itemstartit and linkcountit <= itemendit:        
+            sitest = getWebSite(item[2])
+            innertekst = getInnerText2(sitest, -1, 80)
+            child_titlest = getTitleFromWebsite2(item[2])
+            if sitest != "":
+              echo "Profiling nr... " & $item[4]
+              freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit, parseint(@"sel_alt_freqs"))
+              if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, parseint(@"sel_alt_freqs"), globwordsqta[tabidst])
+              resultst &= "<table>\p"
+              resultst &= "<tr>\p"
+              resultst &= "<td id=\"first_row_prof_table\" colspan=\"3\">- " & child_titlest & "<br>- " & item[3] & "</td>\p"
+              resultst &= "<td id=\"freq_col_prof_table\" rowspan=\"5\">" & freqlist & "</td>\p"
+              if @"dali_expert_start" != "" and @"dali_expert_end" != "":
+                extra_list = getContentList(sitest, @"dali_expert_start", @"dali_expert_end", docHtml, maxcontentitemsit)
+              else:
+                extra_list = getHtmlHeaders(sitest, docHtml, maxheaderitemsit)
 
-            if extra_list.len > 0:
-              resultst &= "<td id=\"extra_col_prof_table\" rowspan=\"5\">" & extra_list & "</td>\p"                
+              if extra_list.len > 0:
+                resultst &= "<td id=\"extra_col_prof_table\" rowspan=\"5\">" & extra_list & "</td>\p"                
 
-            resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"3\"><a href=\"" & item[2] & "\" target=\"" & targetwindowst & "\">" & item[2] & "</a></td>\p"
-            resultst &= "</tr>\p"
+              resultst &= "<tr>\p"
+              resultst &= "<td colspan=\"3\"><a href=\"" & item[2] & "\" target=\"" & targetwindowst & "\">" & item[2] & "</a></td>\p"
+              resultst &= "</tr>\p"
 
-            resultst &= "<tr>\p"
-            resultst &= "<td colspan=\"3\">" & getIntroText(getInnerText3(sitest, 80, "__", maxshortitemit), introtextsizit) & "</td>\p"
-            resultst &= "</tr>\p"
+              resultst &= "<tr>\p"
+              resultst &= "<td colspan=\"3\">" & getIntroText(getInnerText3(sitest, 80, "__", maxshortitemit), introtextsizit) & "</td>\p"
+              resultst &= "</tr>\p"
 
-            wordcountit = countWords(innertekst)
-            p_linkcountit = count(sitest, "<a ")
-            words_per_linkfl = round(float(wordcountit) / float(p_linkcountit))
+              wordcountit = countWords(innertekst)
+              p_linkcountit = count(sitest, "<a ")
+              words_per_linkfl = round(float(wordcountit) / float(p_linkcountit))
 
-            resultst &= "<tr>\p"
-            resultst &= "<td>Depth: " & item[1] & 
-                        "<br>Words: " & $wordcountit & "</td>\p"
-            resultst &= "<td>Links: " & $p_linkcountit & 
-                          "<br>Images: " & $count(sitest, "<img ") & 
-                          "<br>Words/link: " & $words_per_linkfl & "</td>\p"
+              resultst &= "<tr>\p"
+              resultst &= "<td>Depth: " & item[1] & 
+                          "<br>Words: " & $wordcountit & "</td>\p"
+              resultst &= "<td>Links: " & $p_linkcountit & 
+                            "<br>Images: " & $count(sitest, "<img ") & 
+                            "<br>Words/link: " & $words_per_linkfl & "</td>\p"
 
-            resultst &= "<td>" & getYearInfo(innertekst) & "</td>\p"
-            resultst &= "</tr>\p"
-
-
-            resultst &= "<tr>\p"
-            resultst &= "<td>" & item[4] & "</td>\p"
-            resultst &= "<td colspan=\"2\">" & item[0] & "</td>\p"
-            resultst &= "</tr>\p"
-
-            resultst &= "</table><br><br>\p"
-
-        linkcountit += 1
-
-      echo "\pRendering tables..."
-      echo "--------------end profiling-------------------------\p"
+              resultst &= "<td>" & getYearInfo(innertekst) & "</td>\p"
+              resultst &= "</tr>\p"
 
 
-      if calcglobalfreqsbo:
-        globfreqtablest = createFreqTableFromWordList(globwordsqta[tabidst], 6, 20)
-        resultst = nav_noticest & globfreqtablest & resultst & nav_noticest
+              resultst &= "<tr>\p"
+              resultst &= "<td>" & item[4] & "</td>\p"
+              resultst &= "<td colspan=\"2\">" & item[0] & "</td>\p"
+              resultst &= "</tr>\p"
+
+              resultst &= "</table><br><br>\p"
+
+          linkcountit += 1
+
+        echo "\pRendering tables..."
+        echo "--------------end profiling-------------------------\p"
+
+
+        if calcglobalfreqsbo:
+          globfreqtablest = createFreqTableFromWordList(globwordsqta[tabidst], 6, 20)
+          resultst = nav_noticest & globfreqtablest & resultst & nav_noticest
+        else:
+          resultst = nav_noticest & resultst & nav_noticest
+
+        innervarob["results_list"] = resultst
+        innervarob["statustext"] = "Results " & $itemstartit & " thru " & $itemendit & 
+                            " shown of " & $len(datasqta[tabidst]) & " retrieved weblinks.."
       else:
-        resultst = nav_noticest & resultst & nav_noticest
-
-      innervarob["results_list"] = resultst
-      innervarob["statustext"] = "Results " & $itemstartit & " thru " & $itemendit & 
-                          " shown of " & $len(datasqta[tabidst]) & " retrieved weblinks.."
+        innervarob["statustext"] = "Please retrieve web-links before profiling..."
 
 
     # =================ns code ending here =====================

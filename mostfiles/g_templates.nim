@@ -12,6 +12,31 @@ template withFile*(f, fn, mode, actions: untyped): untyped =
     quit("cannot open: " & fn)
 
 
+template withFileAdvanced*(f, fn, mode, actions: untyped): untyped =
+  var f: File
+  if open(f, fn, mode):
+    try:
+      actions
+
+    except:
+      let errob = getCurrentException()
+      echo "\p******* Unanticipated error ******* \p" 
+      echo repr(errob) & "\p****End exception****\p"
+    finally:
+      close(f)
+  else:
+    quit("Cannot open: " & fn)
+
+
+
+    except:
+      let errob = getCurrentException()
+      echo "\p******* Unanticipated error ******* \p" 
+      echo "Last file-line read: " & lastlinest & "\p"
+      echo repr(errob) & "\p****End exception****\p"
+
+
+
 #[ 
 Below are some timing-functions that may or may not
 work. I find the cpuTime function unreliable, for example

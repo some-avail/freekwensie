@@ -121,10 +121,29 @@
         },
         "datalists fp":
         {
-          "my_first_datalist":
+          "pasted_link":
           {
-            "setlabel": "yes",
-            "dl_lab": "Test-label:",
+            "dl_lab": "",
+            "dl_values": 
+              [
+                {"real-value": "echte waarde", "show-value": "getoonde waarde 1"},
+                {"real-value": "tweede waarde", "show-value": "getoonde waarde 2"},
+                {"real-value": "derde waarde", "show-value": "getoonde waarde 3"}
+              ]
+          },
+          "dali_expert_start":
+          {
+            "dl_lab": "",
+            "dl_values": 
+              [
+                {"real-value": "echte waarde", "show-value": "getoonde waarde 1"},
+                {"real-value": "tweede waarde", "show-value": "getoonde waarde 2"},
+                {"real-value": "derde waarde", "show-value": "getoonde waarde 3"}
+              ]
+          },
+          "dali_expert_end":
+          {
+            "dl_lab": "",
             "dl_values": 
               [
                 {"real-value": "echte waarde", "show-value": "getoonde waarde 1"},
@@ -132,6 +151,7 @@
                 {"real-value": "derde waarde", "show-value": "getoonde waarde 3"}
               ]
           }
+
         },
         "basic tables fp":
         {

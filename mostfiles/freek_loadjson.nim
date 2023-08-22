@@ -33,7 +33,7 @@
 
 
 import json, tables, os, times, strutils
-import g_database, g_db2json, g_json_plus, g_disk2nim, g_nim2json
+import g_database, g_db2json, g_json_plus, g_disk2nim, g_nim2json, g_tools
 
 
 const storednodesdir = "stored_gui_nodes"
@@ -64,20 +64,39 @@ when persisttype == persistInMem:
 
 proc initialLoading(parjnob: JsonNode, pagest: string): JsonNode = 
   # custom - load extra public data to the json-object
-  # this is a dummy function for now
+
   var 
     tablesq: seq[string]
     firstelems_pathsq: seq[string] = @["all web-pages", "first web-page", "web-elements fp", "your-elem-type"]
     newjnob: JsonNode = parjnob
     datalisq: seq[array[2, string]]
     tempjnob: JsonNode
-
+    datasq: seq[string]
 
   if pagest == "":   # first page: project_inner.html
     firstelems_pathsq = replaceLastItemOfSeq(firstelems_pathsq, "dropdowns fp")
     datalisq = addShowValuesToSeq(writeFilePatternToSeq("noise_words"), "noise_words", "*")
     tempjnob = createDropdownNodeFromSeq("sel_noise_words", "Pick noise-filter(s):", datalisq)
     graftJObjectToTree("sel_noise_words", firstelems_pathsq, newjnob, tempjnob)
+
+    firstelems_pathsq = replaceLastItemOfSeq(firstelems_pathsq, "datalists fp")
+    datasq = convertFileToSequence("lists/parent_links.dat", "##")
+    datalisq = zipTwoSeqsToOne(datasq)
+    tempjnob = createPicklistNodeFromSeq(pickDataList, "pasted_link", "", datalisq)
+    graftJObjectToTree("pasted_link", firstelems_pathsq, newjnob, tempjnob)    
+
+    firstelems_pathsq = replaceLastItemOfSeq(firstelems_pathsq, "datalists fp")
+    datasq = convertFileToSequence("lists/expert_start.dat", "##")
+    datalisq = zipTwoSeqsToOne(datasq)
+    tempjnob = createPicklistNodeFromSeq(pickDataList, "dali_expert_start", "", datalisq)
+    graftJObjectToTree("dali_expert_start", firstelems_pathsq, newjnob, tempjnob)    
+
+    firstelems_pathsq = replaceLastItemOfSeq(firstelems_pathsq, "datalists fp")
+    datasq = convertFileToSequence("lists/expert_end.dat", "##")
+    datalisq = zipTwoSeqsToOne(datasq)
+    tempjnob = createPicklistNodeFromSeq(pickDataList, "dali_expert_end", "", datalisq)
+    graftJObjectToTree("dali_expert_end", firstelems_pathsq, newjnob, tempjnob)    
+
 
 
   elif pagest == "02":  # second page: project_inner02.html
