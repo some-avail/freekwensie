@@ -3,7 +3,7 @@ si-version===2.3
 
 
 This file contains installation-information for:
-project-name===freekwensie 0.80 for-linux
+project-name===freekwensie 0.81 for-linux
 destination===freek_packages
 def-version===1.1
 
@@ -19,9 +19,9 @@ installer-location: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Program
 VARIABLES TO SET
 comment: if needy update the below versions from x.y to your own version
 arguments---separator=#
-target=/home/bruik/toepassingen/freekwensie/freek_packages/fkw_0.80
-archive=/home/bruik/toepassingen/freekwensie/freek_packages/freekwensie_0.80.tar.gz
-dirbasename=fkw_0.80
+target=/home/bruik/toepassingen/freekwensie/freek_packages/fkw_0.81
+archive=/home/bruik/toepassingen/freekwensie/freek_packages/freekwensie_0.81.tar.gz
+dirbasename=fkw_0.81
 >----------------------------------<
 DIRECTORIES TO CREATE
 comment: from 2.3 onward all super-dirs are co-created
@@ -29,6 +29,7 @@ arguments---none
 #target#/sourcecode
 #target#/public
 #target#/help_info
+#target#/lists
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 comment
@@ -104,6 +105,12 @@ arguments---none
 #target#/help_info
 ..
 README.md
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment: datalist-source here
+arguments---copy_branch=1,,sample_permissions=1
+#target#
+./lists
 >----------------------------------<
 EDIT FILE (ADD, DELETE, REPLACE LINES)
 comment: enable the user-port

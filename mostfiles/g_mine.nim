@@ -3,7 +3,7 @@
 ]#
 
 
-import strutils, httpClient, algorithm, sequtils
+import strutils, httpClient, algorithm, sequtils, math
 import tables
 import unicode
 import g_options
@@ -11,7 +11,7 @@ import g_options
 
 
 const
-  versionfl = 0.42
+  versionfl = 0.43
 
 type
   DocType* = enum
@@ -507,7 +507,7 @@ proc getInnerText3*(tekst: string, maxwordlengthit: int = -1,
     datasq, wordsq: seq[string]
     newtekst, itemst, clippedtekst: string
     itemcountit: int = 0
-    min_item_lengthit: int = 100
+    min_item_lengthit: int = 100      # = min. sentence-length to be approved as sentence
     first_long_item_reachedbo: bool = false
     number_foundbo: bool = false
     number_countit: int = 0
@@ -693,6 +693,8 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
     wordsq, allwordssq: seq[string]
     output_tekst, tempst:string
     indexit: int = 0
+    countnoiseit: int = 0
+    sn_percentagefl: float
 
 
   wordsq = input_tekst.split(" ")
@@ -707,6 +709,8 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
       if len(tempst) >= wordlengthit:
         if not (tempst in skiplistsq):
           doThis
+        else:
+          countnoiseit += 1
 
 
   # implement template depending of type of freq-counting
@@ -723,15 +727,60 @@ proc calcWordFrequencies*(input_tekst:string, wordlengthit:int, skiplistsq: seq[
     prepareWordAddition:
       allwordssq.add(tempst.toLower.strip(leading = false, chars = {'s'}))
 
+  sn_percentagefl = round((allwordssq.len / countnoiseit)  * 100)
+  if useHtmlBreaksbo:
+    output_tekst = "spec/norm = " & $sn_percentagefl & " %<br>--------------<br>"
+  else:
+    output_tekst = "spec/norm = " & $sn_percentagefl & " %\p"
+
 
   # echo allwordssq
   # echo "\p"
   var wordcountta = toCountTable(allwordssq)
+  var ext_wordcountta = wordcountta
   wordcountta.sort()
   # echo wordcountta
   # echo "\p"
 
-  for k, v in wordcountta.pairs:
+  # *********************************************
+  # To find chained words like "operating system"
+  # wordcountta is extended to ext_wordcountta (see above)
+  # One can sort only once for some reason
+
+  var 
+    occs_countit: int = 0
+    indexsecit: int = 0
+    keycombist: string
+    lower_input_tekst: string
+
+  if altfreqit in {1,11}:
+    lower_input_tekst = toLower(input_tekst)
+
+  for keyfirst in wordcountta.keys:
+    indexsecit = 0
+    if indexit < topcountit + 2:
+      for keysecst in wordcountta.keys:
+        if indexsecit < topcountit + 2:        
+          keycombist = keyfirst & " " & keysecst
+          if altfreqit in {0, 10}:
+            occs_countit = count(input_tekst, keycombist)
+          elif altfreqit in {1, 11}:
+            occs_countit = count(lower_input_tekst, toLower(keycombist))
+          ext_wordcountta[keycombist] = occs_countit
+          # echo keycombist, " ", $occs_countit
+        else: break
+        indexsecit += 1
+    else: break
+    indexit += 1
+
+  ext_wordcountta.sort()
+
+  # *******************************************
+
+  indexit = 0
+  # for k, v in wordcountta.pairs:
+  for k, v in ext_wordcountta.pairs:
+
     if indexit < topcountit:
       if useHtmlBreaksbo:
         output_tekst &= k & " - " & $v & "<br>"

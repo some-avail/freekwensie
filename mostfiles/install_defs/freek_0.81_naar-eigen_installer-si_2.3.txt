@@ -9,6 +9,11 @@ def-version===1.0
 
 
 Project-specific remarks:
+MANUALLY DO:
+-update version-vars in def
+-run install
+-rename laatste > laatste_x.(y-1)
+-rename fkw_x.y > laatste
 
 Writes currently to a home-dir-path -see vars
 installer-location: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/jester/freekwensie/mostfiles
@@ -19,10 +24,10 @@ installer-location: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Program
 VARIABLES TO SET
 comment: if needy update the below versions from x.y to your own version
 arguments---separator=#
-source=/home/bruik/toepassingen/freekwensie/freek_packages/fkw_0.80
+source=/home/bruik/toepassingen/freekwensie/freek_packages/fkw_0.81
 target_parent=/home/bruik/toepassingen/freekwensie/freek_eigen
-dirbasename=fkw_0.80
-target=/home/bruik/toepassingen/freekwensie/freek_eigen/fkw_0.80
+dirbasename=fkw_0.81
+target=/home/bruik/toepassingen/freekwensie/freek_eigen/fkw_0.81
 config_dir=/home/bruik/toepassingen/freekwensie/freek_eigen/laatste
 >----------------------------------<
 DIRECTORIES TO CREATE
@@ -44,10 +49,16 @@ noise_sources_french_generic.dat
 noise_sources_russian_generic.dat
 noise_words_french_generic.dat
 noise_words_russian_generic.dat
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---linux_set_exe=1
+#target#
+#config_dir#
 restart_freekwensie_sh
 freekwensie_sh
 >----------------------------------<
-non-handled:
+non-handled this time:
 freek_settings.conf
 >----------------------------------<
 #END-OF-BLOCKS

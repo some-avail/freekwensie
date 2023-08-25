@@ -46,7 +46,7 @@ import g_html_json
 
 
 const 
-  versionfl:float = 0.801
+  versionfl:float = 0.82
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
