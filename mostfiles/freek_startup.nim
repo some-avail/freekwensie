@@ -259,12 +259,6 @@ routes:
       else:
         datasqta.add(tabidst, @[])
 
-      # reset the global word-store (to create later global word-freqs)
-      if globwordsqta.hasKey(tabidst):
-        globwordsqta[tabidst] = @[]
-      else:
-        globwordsqta.add(tabidst, @[])
-
       weblinkst = @"pasted_link" & createSearchString(@"seekbox")
       sitest = getWebSite(weblinkst)
       parent_titlest = getTitleFromWebsite2(weblinkst)
@@ -305,6 +299,13 @@ routes:
 
 
     if @"curaction" == "profiling..":
+      # reset the global word-store (to create later global word-freqs)
+      if globwordsqta.hasKey(tabidst):
+        globwordsqta[tabidst] = @[]
+      else:
+        globwordsqta.add(tabidst, @[])
+        
+
       if $innervarob["tab_id"] != "" and datasqta.hasKey(tabidst):
         if @"chkCalcGlobFreqs" == "chkCalcGlobFreqs": calcglobalfreqsbo = true
         button_nekst = "<button name=\"butNext\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getNextSet()\">Next set</button>"
