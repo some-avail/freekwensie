@@ -1,5 +1,17 @@
 What's new in:
 
+### 0.82
+- Added alternative ways of frequency-counting (case-insensitive and plural-insensitive)
+- Added frequencizing of composite words like "train station"
+- Improved rendering of progress-info in terminal-window (when used)
+- Upgraded text-boxes to picklists for the paste-box and the expert-fields
+  * the picklists are populated from the respective files in the folder "lists"
+  * options can be picked by clearing the box and then arrow-down to show the options
+- improved extraction of intro-text
+- Solved cumul. freqs bug of failed word-store-clearance
+- Fixed minor bugs.
+
+
 ### 0.78
 -removed oversized table-bug(s)
 -added years-metrics to assess some time-info. Date-metrics are a future thing

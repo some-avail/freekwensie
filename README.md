@@ -28,16 +28,24 @@ A website-profile contains:
   - image-count
   - nr. of words per link
   - year-range (the latest year mentioned (maximally the current year) and the earliest year mentioned (minimally 1900 or so))
-  - the nr. of year-numbers 
+  - the nr. of year-numbers
+  - the specificity of the text (= spec/ norm = nr. of non-noise-words / nr. of noise-words)
 - the frequency-list; which words occur with the highest frequency (de-noised), a measure that describes the most important talking-points of the web-document.
 - contents-list which is also generated from the website and is based on either:
   - the headers h1, h2, h3 etc. to generate a contents-list (default)
   - the expert-fields, if filled in. The contents between the first and second expert field is added to the contents-list.
 
-Expert-fields enable knowledgable people to retrieve custom-information. Later explained in the wiki (forth-coming).
+Expert-fields enable knowledgable people to retrieve custom-information. Is explained in the wiki.
 
 #### Usage as search-engine
 Since search-results are a specific form of link-list, a provision has been made to be able to search the web. Firstly by entering the (parsable) search-engine (currently only Bing and Qwant are known to be parsable) and secondly search-terms can be entered in the Seek-box, which terms will then be concatenated with the search-engine web-address.
+
+#### Additional program-info
+- When FKW has been started from a terminal-window, one can see the progress-info there, especially concerning the progress of the profiled child-links, which can take a while.
+- From 0.82 upward, some text-boxes hvae been upgraded to picklists; this goes for the paste-box and the expert-fields.
+  * the picklists are populated from the respective files in the folder "lists".
+  * list-options can be shown by clearing the box and then arrow-down to show and pick the options.
+
 
 #### Installation-info for all operating systems
 FKW is a web-app running in the browser. Furthermore, FWK should be ready-to-run, that is not needing additional package-installations except for the executable (which has been compiled for your specific OS) and the co-delivered data-files .
@@ -75,7 +83,7 @@ The running program acts as a local  web-server, which can be connected to in a 
 http://localhost:5200/freek_startup
 
 ### What's new in x.y?
-[Open the whats-new-file](mostfiles/whatsnew_fkw.txt)  
+[Open the whats-new-file](mostfiles/whatsnew_fkw.txt)
 Or for programmers look at the commits.
 [Commits-list](https://github.com/some-avail/freekwensie/commits/main)
 
