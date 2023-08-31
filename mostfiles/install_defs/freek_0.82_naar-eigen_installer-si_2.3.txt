@@ -1,0 +1,68 @@
+snel_installer definition-file for 
+si-version===2.3
+
+
+This file contains installation-information for:
+project-name===freekwensie 0.80 naar eigen
+destination===production_JB
+def-version===1.0
+
+
+Project-specific remarks:
+MANUALLY DO:
+-update version-vars in def
+-run install
+-rename laatste > laatste_x.(y-1)
+-rename fkw_x.y > laatste
+
+Writes currently to a home-dir-path -see vars
+installer-exec: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/jester/freekwensie/mostfiles/snel_installer_2.3
+===================================================
+
+
+
+VARIABLES TO SET
+comment: if needy update the below versions from x.y to your own version
+arguments---separator=#
+source=/home/bruik/toepassingen/freekwensie/freek_packages/fkw_0.82
+target_parent=/home/bruik/toepassingen/freekwensie/freek_eigen
+dirbasename=fkw_0.82
+target=/home/bruik/toepassingen/freekwensie/freek_eigen/fkw_0.82
+config_dir=/home/bruik/toepassingen/freekwensie/freek_eigen/laatste
+>----------------------------------<
+DIRECTORIES TO CREATE
+comment: from 2.3 onward all super-dirs are co-created
+arguments---none
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---copy_branch=1,,sample_permissions=1
+#target_parent#
+#source#
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---none
+#target#
+#config_dir#
+noise_sources_french_generic.dat
+noise_sources_russian_generic.dat
+noise_sources_english_biblio-pleiades.dat
+noise_words_french_generic.dat
+noise_words_russian_generic.dat
+noise_words_english_biblio-pleiades.dat
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---linux_set_exe=1
+#target#
+#config_dir#
+restart_freekwensie_sh
+freekwensie_sh
+>----------------------------------<
+non-handled this time:
+freek_settings.conf
+>----------------------------------<
+#END-OF-BLOCKS
+
+

@@ -42,7 +42,7 @@ Since search-results are a specific form of link-list, a provision has been made
 
 #### Additional program-info
 - When FKW has been started from a terminal-window, one can see the progress-info there, especially concerning the progress of the profiled child-links, which can take a while.
-- From 0.82 upward, some text-boxes hvae been upgraded to picklists; this goes for the paste-box and the expert-fields.
+- From 0.82 upward, some text-boxes have been upgraded to picklists; this goes for the paste-box and the expert-fields.
   * the picklists are populated from the respective files in the folder "lists".
   * list-options can be shown by clearing the box and then arrow-down to show and pick the options.
 
