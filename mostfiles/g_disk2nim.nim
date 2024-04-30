@@ -1,11 +1,11 @@
 #[ Exchange disk- and file-structures with nim-structures 
 ]#
 
-import strutils
+# import strutils
 import os
 import g_templates
 
-
+var versionfl: float = 0.11
 var debugbo: bool = false
   
 template log(messagest: string) =

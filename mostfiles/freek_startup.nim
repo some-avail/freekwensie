@@ -34,19 +34,20 @@ ADAP NOW
 ]#
 
 
-import jester, moustachu, times, json, os, tables, db_sqlite
+import jester, moustachu, times, json, tables
+import db_connector/db_sqlite
 import strutils, math
 import nimclipboard/libclipboard
 import freek_loadjson, freek_logic
-import g_database, g_templates,  g_db2json, g_json_plus
-import g_mine, g_options, g_cookie, g_tools, g_disk2nim
+import g_database, g_db2json, g_json_plus
+import g_mine, g_options, g_cookie, g_disk2nim
 # from g_html_json import nil
 import g_html_json
-
+# import g_tools, g_templates, os
 
 
 const 
-  versionfl:float = 0.82
+  versionfl:float = 0.822
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -116,7 +117,7 @@ routes:
 
     innervarob["statustext"] = """OK"""
     innervarob["newtab"] = "_self"
-    outervarob["version"] = $versionfl
+    outervarob["version"] = versionfl.formatFloat(ffDecimal, 3)
     outervarob["loadtime"] ="Page-load: " & $now()
     outervarob["namenormal"] = appnamenormalst
     outervarob["namelong"] = appnamelongst
@@ -254,10 +255,14 @@ routes:
 
     if @"curaction" == "retrieving..":
       # (re)set the dataseq which will hold the mined weblinks for the specific tabID
-      if datasqta.hasKey(tabidst):
-        datasqta[tabidst] = @[]
-      else:
-        datasqta.add(tabidst, @[])
+
+      # if datasqta.hasKey(tabidst):
+      #   datasqta[tabidst] = @[]
+      # else:
+      #   datasqta.add(tabidst, @[])
+
+      # Above construct not needed anymore
+      datasqta[tabidst] = @[]
 
       weblinkst = @"pasted_link" & createSearchString(@"seekbox")
       sitest = getWebSite(weblinkst)
@@ -300,11 +305,15 @@ routes:
 
     if @"curaction" == "profiling..":
       # reset the global word-store (to create later global word-freqs)
-      if globwordsqta.hasKey(tabidst):
-        globwordsqta[tabidst] = @[]
-      else:
-        globwordsqta.add(tabidst, @[])
-        
+
+      # if globwordsqta.hasKey(tabidst):
+      #   globwordsqta[tabidst] = @[]
+      # else:
+      #   globwordsqta.add(tabidst, @[])
+
+      # above construct not needed anymore
+      globwordsqta[tabidst] = @[]
+      
 
       if $innervarob["tab_id"] != "" and datasqta.hasKey(tabidst):
         if @"chkCalcGlobFreqs" == "chkCalcGlobFreqs": calcglobalfreqsbo = true

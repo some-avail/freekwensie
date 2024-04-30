@@ -1,4 +1,6 @@
-import std/[times,strutils, os]
+import std/[times,strutils]
+
+var versionfl: float = 0.11
 
 
 template withFile*(f, fn, mode, actions: untyped): untyped =

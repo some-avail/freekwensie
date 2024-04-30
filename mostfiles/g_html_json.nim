@@ -21,14 +21,14 @@ ADAP NOW
 
 
 
-import tables
+# import tables
 import json
 from g_json_plus import nil
-from freek_loadjson import nil
+# from freek_loadjson import nil
 
 
 var 
-  versionfl = 0.5
+  versionfl = 0.51
 
 
 type 
@@ -307,7 +307,7 @@ Sample output:
 
 
 proc setTableFromDb*(jnob: JsonNode, tablenamest: string, radiocheckst: string = "",
-                              valuesq, filtersq: seq[string] = @[]): string = 
+                    valuesq: seq[string] = @[], filtersq: seq[string] = @[]): string = 
 
 #[ 
 UNIT INFO:
@@ -414,10 +414,9 @@ Sample output:
 
 
 
-
 proc setTableDbOpt*(jnob: JsonNode, tablenamest: string,  
-                    showtype: ShownTableElements, radiocheckst: string = "",
-                    valuesq, filtersq: seq[string] = @[]): string = 
+                    showtype: ShownTableElements, radiocheckst: string = "", 
+                    valuesq: seq[string] = @[], filtersq: seq[string] = @[]): string = 
 
 #[ 
 UNIT INFO:

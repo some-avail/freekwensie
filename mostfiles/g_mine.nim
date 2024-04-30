@@ -6,12 +6,12 @@
 import strutils, httpClient, algorithm, sequtils, math
 import tables
 import unicode
-import g_options
-#import os, times
+# import g_options
+
 
 
 const
-  versionfl = 0.43
+  versionfl = 0.44
 
 type
   DocType* = enum
@@ -25,9 +25,15 @@ type
 
 
 # var debugbo: bool = true
-var debugbo: bool = false
+var debugbo: bool = true
+
 
 template log(messagest: string) =
+  # replacement for echo that is only evaluated when debugbo = true
+  if debugbo: 
+    echo messagest
+
+template l1(messagest: string) =
   # replacement for echo that is only evaluated when debugbo = true
   if debugbo: 
     echo messagest
@@ -949,7 +955,6 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
   link1, depth, link2, title2, indexnr
 
   ADAP NOW:
-  - add an include-param
   ADAP FUT:
   -see below
   ]#
@@ -965,10 +970,12 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
 
   # if the website is mal-formed get the data dirtyly..
   if datasq == @[]:
-    #echo "Non-xml acquisition.."
+    l1("Non-xml acquisition..")
     datasq = getDataSeqDirty(sitest, "<a ", "</a>")
 
-  #echo linknumit
+  l1("datasq.len = " & $datasq.len)
+
+  l1("linknumit = " & $linknumit)
 
  #[ 
   # future-approach? Then can also get weblink directly
@@ -1185,24 +1192,30 @@ when isMainModule:
   echo substringsInString("aap noot", @["piet"], true)
 ]#
 
-  #[ 
+   
   # TEST: getChildLinks
-  var datasq: seq[array[5, string]] = @[]
-  #getChildLinks("https://www.bibliotecapleyades.net/esp_lemuria.htm", 1, 1, datasq)
+  var 
+    datasq: seq[array[5, string]] = @[]
+    linkst: string
+    myint: int
+  linkst = "https://www.bibliotecapleyades.net/esp_lemuria.htm"
+  linkst = "https://en.wikipedia.org/wiki/Well-formed_element"
+  linkst = "https://rense.com"
+  # getChildLinks(linkst, 1, 1, datasq)
   #echo getChildLinks("https://en.wikipedia.org/wiki/Well-formed_element", 1, 1, 1, datasq)
-  echo getChildLinks("https://en.wikipedia.org/wiki/Well-formed_element", 
-                                            1, 1, 1, @[], @[], datasq)
+  myint = getChildLinks(linkst, 1, 1, 1, @[], @[], datasq)
+  echo myint
   echo "----------------------------"
   for item in datasq:
     echo item
-]#
+
 
 #[ 
  echo getBaseFromWebAddress2("http://www.x.nl/a/b/c/blah.html", true)
  ]#
 
 
-#[ ]#
+#[
   # TEST: getInnerText2 / 3 or calcWordFrequencies or countWords
   var 
     # sitest = getWebSite("https://en.wikipedia.org/wiki/Well-formed_element")
@@ -1211,9 +1224,11 @@ when isMainModule:
     #sitest = getWebSite("https://www.nrc.nl/nieuws/2022/12/26/oostenrijk-het-russische-vliegdekschip-in-europa-a4152600")
 
   echo "-------------"
+   ]#
+
   #sitest = "bla>eerste<blubla>tweede<prrrrr>derde<hophop"
   # echo getInnerText2(sitest, -1, 1000)
-  discard getInnerText3(sitest, 80, "__", 15)
+  # discard getInnerText3(sitest, 80, "__", 15)
   #echo calcWordFrequencies(getInnerText2(sitest), 7, @["pietje", "jantje"], false, 20)
   #echo countWords(getInnerText2(sitest))
   #echo createSeqOfUniqueWords(getInnerText2(sitest), 1)

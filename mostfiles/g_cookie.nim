@@ -4,10 +4,11 @@
 
 ]#
 
-
-import tables, strutils, json, g_templates
+# import g_templates
+import tables, strutils, json
 from g_html_json import nil
 
+var versionfl: float = 0.1
 
 var debugbo: bool = true
 

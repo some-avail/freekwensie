@@ -14,11 +14,12 @@
  ]#
 
 
-import std/[
-  db_sqlite, 
-  strutils]
+import std/[strutils]
+import db_connector/db_sqlite
 
-import g_templates, g_tools
+import g_tools
+# import g_templates
+
 
 type 
   Comparetype* = enum
@@ -48,7 +49,7 @@ type
 
 var
   debugbo: bool = true
-  versionfl: float = 0.3
+  versionfl: float = 0.31
   double_quote_namesbo: bool
 
 

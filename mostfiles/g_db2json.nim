@@ -4,13 +4,15 @@ This jnob is used loosely or integrated in
 (a copy of) the json-definition (jnob) ]#
 
 
-import std/[json, tables, db_sqlite]
-import g_database, freek_loadjson
-
+# import std/[json, tables]
+import std/[json]
+import db_connector/db_sqlite
+# import g_database, freek_loadjson
+import g_database
 
 var
   debugbo: bool = true
-  versionfl: float = 0.2
+  versionfl: float = 0.21
 
 const
   recordlimit*: int = 200

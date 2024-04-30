@@ -43,6 +43,7 @@ comment
 arguments---none
 #target#
 .
+cacert.pem
 freek.db
 freek_gui02.json
 freek_gui03.json

@@ -5,9 +5,11 @@
 ]#
 
 
-import tables, strutils, json, g_templates
+# import tables, strutils, json, g_templates
+import strutils, json, g_templates
 #from g_html_json import nil
 
+var versionfl: float = 0.11
 
 var debugbo: bool = true
 
@@ -67,7 +69,12 @@ proc zipTwoSeqsToOne*(firstsq: seq[string], secondsq: seq[string] = @[]): seq[ar
   result = newSeq
 
 
+proc filterMatches(tekst, filterst: string): bool = 
 
+  #[
+  If the filter matches the text, true is returned.
+  ]#
+  discard
 
 
 when isMainModule:

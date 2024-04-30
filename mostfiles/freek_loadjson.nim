@@ -40,7 +40,7 @@ const storednodesdir = "stored_gui_nodes"
 
 let durob = initDuration(hours = 6)
 
-var versionfl: float = 0.3
+var versionfl: float = 0.31
 
 
 
@@ -146,7 +146,9 @@ proc readStoredNode*(tabIDst, project_prefikst: string, pagest: string = ""): Js
 
   when persisttype == persistInMem:
     if not jsondefta.hasKey(tabIDst):
-        jsondefta.add(tabIDst, readInitialNode(project_prefikst, pagest))
+        # jsondefta.add(tabIDst, readInitialNode(project_prefikst, pagest))
+        jsondefta[tabIDst] = readInitialNode(project_prefikst, pagest)
+
         #echo "====*******========************======="
     result = jsondefta[tabIDst]
 

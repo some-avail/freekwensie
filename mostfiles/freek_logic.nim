@@ -8,7 +8,7 @@ import g_mine, g_templates, g_tools, g_options
 
 var
   debugbo: bool = true
-  versionfl: float = 0.2
+  versionfl: float = 0.21
 
 
 # Beware: variable debugbo might be used globally, modularly and procedurally
@@ -255,7 +255,7 @@ proc noiseVarMessages*(filename, fraction, max_num_of_links: string): string =
 proc getYearsSeqFromText(tekst: string): seq[int] = 
   #[Extract year-numbers from tekst and put them in an
   ordered sequence. 
-  Years between 1900 and the current year
+  Years between startyear and the current year
    ]#
 
   var
@@ -263,13 +263,15 @@ proc getYearsSeqFromText(tekst: string): seq[int] =
     timedt: DateTime
     timest: string
     curyearit: int
+    startyearit: int = 1800
+
 
   # retrieve the current year
   timedt = now()
   timest = format(timedt, "yyyy")
   curyearit = parseInt(timest)
 
-  for yearit in 1900..curyearit:
+  for yearit in startyearit..curyearit:
     if $yearit in tekst:
       yearsq.add(yearit)
 
