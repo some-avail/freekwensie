@@ -25,7 +25,7 @@ type
 
 
 # var debugbo: bool = true
-var debugbo: bool = true
+var debugbo: bool = false
 
 
 template log(messagest: string) =

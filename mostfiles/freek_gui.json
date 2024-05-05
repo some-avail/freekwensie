@@ -52,7 +52,12 @@
           "check_globfreqlist":
           [
             {"name":"chkCalcGlobFreqs","lab":"Calculate global frequencies","selected":false}
+          ],
+          "check_filter_results":
+          [
+            {"name":"chkFilterResults","lab":"Filter profiling-results","selected":false}
           ]
+
 
         },
         "dropdowns fp":

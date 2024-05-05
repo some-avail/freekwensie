@@ -113,7 +113,7 @@ based on an external gui-def (project_gui.json)
 Fill in the checked ones (checked_onesq) with the names 
 for checkboxes you want to check,
 or fill in "default" to read the default-values from webgui_def.
-
+align_horizontal means to align the checkbox horizontally and not vertically.
 
 Returns for sample-def (default):
 <input type="checkbox" id="id_aap" name="aap">

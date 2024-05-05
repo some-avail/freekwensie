@@ -43,11 +43,12 @@ import g_database, g_db2json, g_json_plus
 import g_mine, g_options, g_cookie, g_disk2nim
 # from g_html_json import nil
 import g_html_json
-# import g_tools, g_templates, os
+import g_tools
+#import g_templates, os
 
 
 const 
-  versionfl:float = 0.822
+  versionfl:float = 0.824
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -144,7 +145,7 @@ routes:
 
 
     innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(initialjnob, "check_globfreqlist", @["default"], true)
-
+    innervarob["check_filter_results"] = g_html_json.setCheckBoxSet(initialjnob, "check_filter_results", @["default"], true)
     innervarob["sel_noise_words"] = g_html_json.setDropDown(initialjnob, "sel_noise_words", 
                                               "noise_words_english_generic.dat", 10)
 
@@ -171,6 +172,9 @@ routes:
       seqcountit, wordcountit, p_linkcountit: int
       calcglobalfreqsbo: bool = false
       words_per_linkfl: float
+      start_profilingbo: bool
+      filter_match_resultst, filter_test: string
+
       # skip-list created from file:
       skiplisq: seq[string] = convertFileToSequence(@"sel_noise_words", ">>>")
       # options:
@@ -237,6 +241,8 @@ routes:
     innervarob["seekbox"] = @"seekbox"
     innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(gui_jnob, "check_globfreqlist", 
                                                     @[@"chkCalcGlobFreqs"], true)
+    innervarob["check_filter_results"] = g_html_json.setCheckBoxSet(gui_jnob, "check_filter_results", 
+                                                    @[@"chkFilterResults"], true)
 
 
     innervarob["sel_noise_words"] = g_html_json.setDropDown(gui_jnob, "sel_noise_words", 
@@ -265,14 +271,16 @@ routes:
       datasqta[tabidst] = @[]
 
       weblinkst = @"pasted_link" & createSearchString(@"seekbox")
+      echo "\p-----------------------------------------------------"
+      echo "Downloading website for link-retrieval: " & weblinkst      
       sitest = getWebSite(weblinkst)
       parent_titlest = getTitleFromWebsite2(weblinkst)
       outervarob["pagetitle"] = appnamebriefst & "_LNX_" & parent_titlest & "  -- " & appnamenormalst
       includesubsq = split(@"includable", ",,")
       excludesubsq = split(@"excludable", ",,") & getValList(readOptionFromFile("subs-not-in-childlinks", optValueList))
       if sitest != "":
-        echo "\p-----------------------------------------------------"
-        echo "Retrieving child-links from: " & weblinkst
+
+        echo "Retrieving child-links..."
         getchildscountit = getChildLinks(weblinkst, parseint(@"sel_parsing_depth"), 1, 1, 
                                           includesubsq, excludesubsq ,datasqta[tabidst])
         echo $getchildscountit & " sublinks retrieved.."
@@ -300,22 +308,16 @@ routes:
       else:
         innervarob["statustext"] = "Could not acquire website.."
         echo "No rendering of sublinks requested. Ready"
-      echo "----------------------------------"
+      echo "-----------------------------------------------------"
 
 
     if @"curaction" == "profiling..":
       # reset the global word-store (to create later global word-freqs)
-
-      # if globwordsqta.hasKey(tabidst):
-      #   globwordsqta[tabidst] = @[]
-      # else:
-      #   globwordsqta.add(tabidst, @[])
-
-      # above construct not needed anymore
       globwordsqta[tabidst] = @[]
       
+      filter_test = filterIsMatching("", @"seekbox", true)
+      if $innervarob["tab_id"] != "" and datasqta.hasKey(tabidst) and (@"chkFilterResults" == "" or filter_test == "filter_ok"):
 
-      if $innervarob["tab_id"] != "" and datasqta.hasKey(tabidst):
         if @"chkCalcGlobFreqs" == "chkCalcGlobFreqs": calcglobalfreqsbo = true
         button_nekst = "<button name=\"butNext\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getNextSet()\">Next set</button>"
         button_prevst = "<button name=\"butPrev\" class=\"allbuttons but_prev_next\" type=\"button\" onclick=\"getPrevSet()\">Previous set</button>"
@@ -331,11 +333,20 @@ routes:
 
         echo "\p--------------start profiling-------------------------"
         for item in datasqta[tabidst]:
-          if linkcountit >= itemstartit and linkcountit <= itemendit:        
+          if linkcountit >= itemstartit and linkcountit <= itemendit:
+            start_profilingbo = true
             sitest = getWebSite(item[2])
             innertekst = getInnerText2(sitest, -1, 80)
+            
+
+            if @"chkFilterResults" == "chkFilterResults":
+              filter_match_resultst = filterIsMatching(innertekst, @"seekbox")
+              if filter_match_resultst != "yes":
+                start_profilingbo = false
+
+
             child_titlest = getTitleFromWebsite2(item[2])
-            if sitest != "":
+            if sitest != "" and start_profilingbo:
               echo "Profiling nr... " & $item[4]
               freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit, parseint(@"sel_alt_freqs"))
               if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, parseint(@"sel_alt_freqs"), globwordsqta[tabidst])
@@ -396,9 +407,10 @@ routes:
         innervarob["results_list"] = resultst
         innervarob["statustext"] = "Results " & $itemstartit & " thru " & $itemendit & 
                             " shown of " & $len(datasqta[tabidst]) & " retrieved weblinks.."
-      else:
+      elif $innervarob["tab_id"] == "" or not (datasqta.hasKey(tabidst)):
         innervarob["statustext"] = "Please retrieve web-links before profiling..."
-
+      elif filter_test != "filter_ok":
+        innervarob["statustext"] = filter_test
 
     # =================ns code ending here =====================
 

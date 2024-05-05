@@ -47,7 +47,7 @@ textarea {
   margin-left: 20px;
 }
 
-#labelseek, #id_chkCalcGlobFreqs, #labelclusion {
+#labelseek, #id_chkCalcGlobFreqs, #id_chkFilterResults, #labelclusion {
   margin-left: 225px;
   margin-right: 10px;
 }

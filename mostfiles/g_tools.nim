@@ -69,12 +69,105 @@ proc zipTwoSeqsToOne*(firstsq: seq[string], secondsq: seq[string] = @[]): seq[ar
   result = newSeq
 
 
-proc filterMatches(tekst, filterst: string): bool = 
+
+proc filterIsMatching*(tekst, searchtermst: string, testingbo: bool = false): string = 
 
   #[
-  If the filter matches the text, true is returned.
+  The searchterms form the filter.
+  result types:
+  - If filter matches the text: yes
+  - if filter doesnt match: no
+  - if filter is invalid: error-message
+
+  currently supported operators:
+  - a = and, o = or, n = (and) not
+  - using no operators: will be treated as 'and'
+
+  ADAP FUT:
+  -add phrases
+  -enable parentheses
+  -enable alternative operators (more common ones)
   ]#
-  discard
+
+
+  var 
+    termsq, splitallsq, operatorsq: seq[string]
+    first_operator_missingbo: bool = true
+    abortbo: bool = false
+    foundsq: seq[bool] = @[]
+    composbo: bool
+
+  result = ""
+  splitallsq = searchtermst.split()
+  for it, elemst in splitallsq:
+    if elemst.len > 1:
+      termsq.add(elemst)
+    elif elemst.len == 1:
+      operatorsq.add(elemst)
+      if it == 0:
+        first_operator_missingbo = false
+
+  if termsq.len == 0:
+    result = "No search-terms entered.."
+    abortbo = true
+  elif termsq.len > 0:
+    if termsq.len == operatorsq.len + 1:
+      if first_operator_missingbo:
+        operatorsq.insert("", 0)
+      else:
+        result = "Invalid search-terms; please re-enter"
+        abortbo = true
+    if operatorsq.len == 0:
+      # suppose and-ops are meant and add them
+      for thing in termsq:
+        operatorsq.add("a")
+      operatorsq.add("a")
+
+  if testingbo:
+    if result == "": result = "filter_ok"
+
+  if not (abortbo or testingbo):
+    #var operatorsq: seq[char] = @['a', 'n', 'a', 'o']
+
+    # test if the search-terms are present in the text
+    for termst in termsq:
+      if tekst.contains(termst):
+        foundsq.add(true)
+      else:
+        foundsq.add(false)
+
+
+    # create the logical expression based on the found results
+    for it, valbo in foundsq:
+      if it < operatorsq.len:
+        if it == 0:
+          case operatorsq[it]
+          of "n":
+            composbo = not valbo
+          else:
+            composbo = valbo
+        else:
+          case operatorsq[it]
+          of "a":      
+            composbo = composbo and valbo
+          of "o":
+            composbo = composbo or valbo
+          of "n":
+            composbo = composbo and not valbo
+          else:
+            echo "invalid operator.."
+      else:
+        echo "cannot be bigger.."
+      #echo it
+    #echo composbo
+
+    if composbo:
+      result = "yes"
+    else:
+      result = "no"
+
+
+
 
 
 when isMainModule:
@@ -90,5 +183,11 @@ when isMainModule:
   convertSequenceToFile("fq_noise_word.dat", skiplistsq)
  ]#
 
- echo zipTwoSeqsToOne(@["1","2","3"], @["a","b","c"])
+ #echo zipTwoSeqsToOne(@["1","2","3"], @["a","b","c"])
+
+ var 
+  tekst: string = "appel en een peer"
+  searchtermst: string = "banaan n citroen"
+
+ echo filterIsMatching(tekst, searchtermst)
 
