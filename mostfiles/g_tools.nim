@@ -70,7 +70,7 @@ proc zipTwoSeqsToOne*(firstsq: seq[string], secondsq: seq[string] = @[]): seq[ar
 
 
 
-proc filterIsMatching*(tekst, searchtermst: string, testingbo: bool = false): string = 
+proc filterIsMatching*(tekst, searchtermst: string, testingbo: bool = false, itemnumberst: string = ""): string = 
 
   #[
   The searchterms form the filter.
@@ -164,6 +164,7 @@ proc filterIsMatching*(tekst, searchtermst: string, testingbo: bool = false): st
     if composbo:
       result = "yes"
     else:
+      echo "No match nr. " & itemnumberst
       result = "no"
 
 

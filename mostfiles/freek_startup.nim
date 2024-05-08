@@ -48,7 +48,7 @@ import g_tools
 
 
 const 
-  versionfl:float = 0.824
+  versionfl:float = 0.825
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -174,6 +174,8 @@ routes:
       words_per_linkfl: float
       start_profilingbo: bool
       filter_match_resultst, filter_test: string
+      items_filtered_countit, items_total_countit: int
+
 
       # skip-list created from file:
       skiplisq: seq[string] = convertFileToSequence(@"sel_noise_words", ">>>")
@@ -332,22 +334,26 @@ routes:
         nav_noticest = "<center>" & button_prevst & "Results from " & $itemstartit & " thru " & $itemendit & button_nekst & "</center><br><br>\p"
 
         echo "\p--------------start profiling-------------------------"
+        items_total_countit = 0
+        items_filtered_countit = 0
+
         for item in datasqta[tabidst]:
           if linkcountit >= itemstartit and linkcountit <= itemendit:
             start_profilingbo = true
             sitest = getWebSite(item[2])
             innertekst = getInnerText2(sitest, -1, 80)
-            
+            items_total_countit += 1
 
             if @"chkFilterResults" == "chkFilterResults":
-              filter_match_resultst = filterIsMatching(innertekst, @"seekbox")
+              filter_match_resultst = filterIsMatching(innertekst, @"seekbox", false, item[4])
               if filter_match_resultst != "yes":
                 start_profilingbo = false
-
+              else:
+                items_filtered_countit += 1
 
             child_titlest = getTitleFromWebsite2(item[2])
             if sitest != "" and start_profilingbo:
-              echo "Profiling nr... " & $item[4]
+              echo "Profiling nr...... " & $item[4]
               freqlist = calcWordFrequencies(innertekst, fqwordlenghit, skiplisq, true, fqlistlengthit, parseint(@"sel_alt_freqs"))
               if calcglobalfreqsbo: calcCumulFrequencies(innertekst, fqwordlenghit, skiplisq, parseint(@"sel_alt_freqs"), globwordsqta[tabidst])
               resultst &= "<table>\p"
@@ -405,8 +411,14 @@ routes:
           resultst = nav_noticest & resultst & nav_noticest
 
         innervarob["results_list"] = resultst
-        innervarob["statustext"] = "Results " & $itemstartit & " thru " & $itemendit & 
-                            " shown of " & $len(datasqta[tabidst]) & " retrieved weblinks.."
+
+        statustekst = "Results " & $itemstartit & " thru " & $itemendit & 
+                            " shown of " & $len(datasqta[tabidst]) & " retrieved weblinks "
+        if @"chkFilterResults" == "chkFilterResults":
+          statustekst &=  "(" & $items_filtered_countit & " filtered of " & $items_total_countit & ")"
+        else:
+          statustekst &= "(" & $items_total_countit & " shown)"
+        innervarob["statustext"] = statustekst
       elif $innervarob["tab_id"] == "" or not (datasqta.hasKey(tabidst)):
         innervarob["statustext"] = "Please retrieve web-links before profiling..."
       elif filter_test != "filter_ok":
