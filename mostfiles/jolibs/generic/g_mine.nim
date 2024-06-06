@@ -7,11 +7,11 @@ import strutils, httpClient, algorithm, sequtils, math
 import tables
 import unicode
 # import g_options
-
+import g_tools
 
 
 const
-  versionfl = 0.44
+  versionfl = 0.45
 
 type
   DocType* = enum
@@ -976,6 +976,9 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
   l1("datasq.len = " & $datasq.len)
 
   l1("linknumit = " & $linknumit)
+  echo "Current depth = ", $curdepthit
+  echo $datasq.len, " raw links retrieved.."
+  echo "Parsing links.."
 
  #[ 
   # future-approach? Then can also get weblink directly
@@ -993,6 +996,9 @@ proc getChildLinks*(parentweblinkst: string, maxdepthit, curdepthit, linknumit: 
     linkcountit = linknumit
 
     for itemst in datasq:
+      #echo $linkcountit
+      if countIsFactorOf(linkcountit, 100):
+        echo "Links processed: ", $linkcountit
 
       # parse the data-sequence for title and link2
       frag_onesq = itemst.split('>', 1)

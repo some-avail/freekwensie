@@ -1,6 +1,62 @@
-import std/[times,strutils]
+import std/[times, strutils]
 
 var versionfl: float = 0.11
+
+
+var wispbo = true
+
+
+
+template wisp_old*(wordsq: varargs[string, `$`]) =
+  # works only for non-release-compilation; thats ok
+  var
+    filepathst, filenamest, modulest, procnamest: string
+    pathsq: seq[string]
+
+  if wispbo:
+    let tob = getStackTraceEntries()      # a proc from the system-module
+
+    if tob.len > 0:       # needed for release-compilation
+      filepathst = $tob[tob.len - 1].filename
+      pathsq = filepathst.split("/")
+      filenamest = pathsq[pathsq.len - 1]
+      modulest = filenamest[0..filenamest.len - 5]
+      procnamest = $tob[tob.len - 1].procname
+      echo "==>  ", modulest, "_", procnamest, "  echos: ",  wordsq
+
+
+
+
+template wisp*(wordsq: varargs[string, `$`]) =
+  # works only for non-release-compilation; thats ok
+  var
+    filepathst, filenamest, modulest, procnamest: string
+    hfilepathst, hfilenamest, hmodulest, hprocnamest: string    
+    pathsq, hpathsq: seq[string]
+    messagest: string
+
+  if wispbo:
+    let tob = getStackTraceEntries()      # a proc from the system-module
+
+    if tob.len > 0:       # needed for release-compilation
+      filepathst = $tob[tob.len - 1].filename
+      pathsq = filepathst.split("/")
+      filenamest = pathsq[pathsq.len - 1]
+      modulest = filenamest[0..filenamest.len - 5]
+      procnamest = $tob[tob.len - 1].procname
+
+      if tob.len > 1:
+        hfilepathst = $tob[tob.len - 2].filename
+        hpathsq = hfilepathst.split("/")
+        hfilenamest = hpathsq[hpathsq.len - 1]
+        hmodulest = hfilenamest[0..hfilenamest.len - 5]
+        hprocnamest = $tob[tob.len - 2].procname
+
+      messagest = wordsq.join(" ")
+      echo ""
+      echo "==>  ", hprocnamest, "---", procnamest, "  echos:   ",  messagest
+
+
 
 
 template withFile*(f, fn, mode, actions: untyped): untyped =
@@ -11,7 +67,8 @@ template withFile*(f, fn, mode, actions: untyped): untyped =
     finally:
       close(f)
   else:
-    quit("cannot open: " & fn)
+    echo("cannot open: " & fn)
+
 
 
 template withFileAdvanced*(f, fn, mode, actions: untyped): untyped =
@@ -27,15 +84,8 @@ template withFileAdvanced*(f, fn, mode, actions: untyped): untyped =
     finally:
       close(f)
   else:
-    quit("Cannot open: " & fn)
+    echo("Cannot open: " & fn)
 
-
-
-    except:
-      let errob = getCurrentException()
-      echo "\p******* Unanticipated error ******* \p" 
-      echo "Last file-line read: " & lastlinest & "\p"
-      echo repr(errob) & "\p****End exception****\p"
 
 
 
@@ -75,7 +125,7 @@ template timeNeatly(statement: untyped): float =
   cpuTime() - t0
 
 
-template  timeCop*(statement: untyped) = 
+template timeCop*(statement: untyped) = 
   # measures real-time instead of cpu-time
   let t0 = now()
   statement

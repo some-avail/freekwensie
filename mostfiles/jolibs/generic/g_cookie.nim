@@ -1,12 +1,12 @@
 #[ 
   This module contains the functions for the operation of 
   the cookie-tunnel called at the end of proj.startup.nim. 
-
 ]#
+
 
 # import g_templates
 import tables, strutils, json
-from g_html_json import nil
+import g_json2html
 
 var versionfl: float = 0.1
 
@@ -48,17 +48,17 @@ proc runFunctionFromClient*(funcPartsta: OrderedTable[string, string], jnob: Jso
   # run the function
   if funcPartsta["funcname"] == "g_cookie.dummyPass":
     result = dummyPass(funcPartsta["newcontent"])
-  elif funcPartsta["funcname"] == "g_html_json.setDropDown":
-    result = g_html_json.setDropDown(jnob, funcPartsta["html-elem-name"], funcPartsta["selected-value"], 
+  elif funcPartsta["funcname"] == "setDropDown":
+    result = setDropDown(jnob, funcPartsta["html-elem-name"], funcPartsta["selected-value"], 
       parseInt(funcPartsta["dd-size"]))
-  elif funcPartsta["funcname"] == "g_html_json.setDropDown":
-    result = g_html_json.setDropDown(jnob, funcPartsta["html-elem-name"], funcPartsta["selected-value"], 
+  elif funcPartsta["funcname"] == "setDropDown":
+    result = setDropDown(jnob, funcPartsta["html-elem-name"], funcPartsta["selected-value"], 
       parseInt(funcPartsta["dd-size"]))
 
 
   
 
-#     "funcname:g_html_json.setDropDown++location:inner++varname:dropdown1++param2:dropdownname_01++param3:third realvalue++param4:1", 60);
+#     "funcname:setDropDown++location:inner++varname:dropdown1++param2:dropdownname_01++param3:third realvalue++param4:1", 60);
 # proc setDropDown*(jnob: JsonNode, dropdownnamest, selected_valuest: string, 
 #                     sizeit: int):string = 
 

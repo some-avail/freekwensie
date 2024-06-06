@@ -33,7 +33,7 @@
 
 
 import json, tables, os, times, strutils
-import g_database, g_db2json, g_json_plus, g_disk2nim, g_nim2json, g_tools
+import jolibs/generic/[g_disk2nim, g_database, g_db2json, g_json_plus, g_nim2json, g_tools]
 
 
 const storednodesdir = "stored_gui_nodes"

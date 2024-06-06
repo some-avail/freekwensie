@@ -1,6 +1,6 @@
 import std/[random, tables, math, times]
 import strutils, algorithm
-import g_mine, g_templates, g_tools, g_options
+import jolibs/generic/[g_options, g_mine, g_templates, g_tools]
 
 
 #[ Here logic that cannot be generalized out of the project ]#

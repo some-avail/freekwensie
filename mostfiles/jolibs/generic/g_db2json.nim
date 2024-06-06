@@ -7,7 +7,6 @@ This jnob is used loosely or integrated in
 # import std/[json, tables]
 import std/[json]
 import db_connector/db_sqlite
-# import g_database, freek_loadjson
 import g_database
 
 var

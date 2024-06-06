@@ -23,7 +23,9 @@ ADAP NOW
 
 # import tables
 import json
-from g_json_plus import nil
+#from jolibs/generic/g_json_plus import nil
+import g_json_plus
+
 # from freek_loadjson import nil
 
 
@@ -67,7 +69,7 @@ proc setRadioButtons*(jnob: JsonNode, setnamest, value_selectst:string): string 
 
 
   var foundjnob: JsonNode = %*{}
-  g_json_plus.getDeepNodeFromKey(setnamest, jnob, foundjnob)
+  getDeepNodeFromKey(setnamest, jnob, foundjnob)
   var 
     htmlst, valuest, labelst, checkst:string
     selectbo: bool
@@ -126,7 +128,7 @@ Returns for sample-def (default):
 
 
   var foundjnob: JsonNode = %*{}
-  g_json_plus.getDeepNodeFromKey(setnamest, jnob, foundjnob)
+  getDeepNodeFromKey(setnamest, jnob, foundjnob)
 
   var 
     htmlst, boxnamest, labelst, checkst, alignst:string
@@ -201,7 +203,7 @@ Sample output:
 
 
   var foundjnob: JsonNode = %*{}
-  g_json_plus.getDeepNodeFromKey(dropdownnamest, jnob, foundjnob)
+  getDeepNodeFromKey(dropdownnamest, jnob, foundjnob)
 
 
   namest = dropdownnamest
@@ -276,7 +278,7 @@ Sample output:
     foundjnob: JsonNode = %*{}
     headersq, datasq, rowsq: seq[JsonNode] = @[]
 
-  g_json_plus.getDeepNodeFromKey(tablenamest, jnob, foundjnob)
+  getDeepNodeFromKey(tablenamest, jnob, foundjnob)
   
   # labelst = newlang(foundjnob[0]["ddlab"].getStr())  # translated
 #  var valuelistsq = foundjnob[1]["ddvalues"].getElems()   # values not translated for now
@@ -333,7 +335,7 @@ Sample output:
     valuest, idst: string
 
 
-  g_json_plus.getDeepNodeFromKey(tablenamest, jnob, foundjnob)
+  getDeepNodeFromKey(tablenamest, jnob, foundjnob)
   
   # labelst = newlang(foundjnob[0]["ddlab"].getStr())  # translated
 #  var valuelistsq = foundjnob[1]["ddvalues"].getElems()   # values not translated for now
@@ -448,7 +450,7 @@ Sample output:
     valuest, idst: string
 
 
-  g_json_plus.getDeepNodeFromKey(tablenamest, jnob, foundjnob)
+  getDeepNodeFromKey(tablenamest, jnob, foundjnob)
   
   # labelst = newlang(foundjnob[0]["ddlab"].getStr())  # translated
 #  var valuelistsq = foundjnob[1]["ddvalues"].getElems()   # values not translated for now
@@ -575,7 +577,7 @@ Sample output:
     valuest, idst: string
 
 
-  g_json_plus.getDeepNodeFromKey(tablenamest, jnob, foundjnob)
+  getDeepNodeFromKey(tablenamest, jnob, foundjnob)
   
   # labelst = newlang(foundjnob[0]["ddlab"].getStr())  # translated
 #  var valuelistsq = foundjnob[1]["ddvalues"].getElems()   # values not translated for now
@@ -674,7 +676,7 @@ Sample output:
 
 
   var foundjnob: JsonNode = %*{}
-  g_json_plus.getDeepNodeFromKey(datalistnamest, jnob, foundjnob)
+  getDeepNodeFromKey(datalistnamest, jnob, foundjnob)
 
 
   namest = datalistnamest

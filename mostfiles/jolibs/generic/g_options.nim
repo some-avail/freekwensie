@@ -5,11 +5,14 @@ Some tools like:
 
 Is a forth-development fr_tools.nim of readible
 Expects global constant project_prefikst
-
 ]#
 
 
+
 import strutils, times
+import std/paths
+import ../../app_globals
+
 
 var debugbo: bool = false
 
@@ -17,9 +20,11 @@ var debugbo: bool = false
 var 
   interfacelanguagestatust*: string = ""
   # test: string
-  versionfl: float = 0.3
+  versionfl: float = 0.4
 
-const project_prefikst = "freek"
+
+# moved to: app_globals:
+#const project_prefikst = "freek"
 
 type  
   OptionType* = enum
@@ -43,6 +48,7 @@ template log(messagest: string) =
 
 proc readOptionFromFile_fut*[T:string|int](optnamest: string, optiontype: OptionType): T =
   #[
+  Under construction...
   Read from the settings-file based on the option-data, which are ordered 
   per line containing:
   option-name___value___some description here___list-item1,,list-item2,,list-item3,,ect...
@@ -123,12 +129,13 @@ proc readOptionFromFile*(optnamest: string, optiontype: OptionType): string =
 
   The option-name is the first part of the line, the others are retrieved thru the 
   optiontype-enum.
-
   Expects settings-file as projectprefix_settings.conf"
  ]#
 
   var 
+    #filenamest: string = "../../" & project_prefikst & "_settings.conf"
     filenamest: string = project_prefikst & "_settings.conf"
+
     clusterst: string
     optionsq: seq[string]
     optiondatast: string = ""
@@ -180,6 +187,7 @@ proc readOptionFromFile*(optnamest: string, optiontype: OptionType): string =
     finally:
       close(myfile)
   else:
+    #echo string(getCurrentDir())
     echo "File " & filenamest & " could not be opened."
     echo "Please check name and / or presence of file."
 
@@ -214,6 +222,7 @@ proc newlang*(englishtekst:string):string =
     # no translation
     transdatast = englishtekst
   else:
+    #filenamest = "../../" & targetlangst & "_translations.tra"
     filenamest = targetlangst & "_translations.tra"
 
     if open(myfile, filenamest):    # try to open the file

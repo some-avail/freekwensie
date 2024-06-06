@@ -5,9 +5,8 @@
 ]#
 
 
-# import tables, strutils, json, g_templates
-import strutils, json, g_templates
-#from g_html_json import nil
+import strutils, json
+import g_templates
 
 var versionfl: float = 0.11
 
@@ -51,6 +50,18 @@ proc convertSequenceToFile*(filepathst: string, lisq: seq[string]) =
   withFile(txtfl, filepathst, fmWrite):  # special colon
     for item in lisq:
       txtfl.writeLine(item)
+
+
+
+proc convertSequenceToText(lisq: seq[string]): string = 
+  # untested..
+  var tekst: string = ""
+
+  for filest in lisq:
+    tekst &= filest & "\p"
+
+  result = tekst
+  
 
 
 proc zipTwoSeqsToOne*(firstsq: seq[string], secondsq: seq[string] = @[]): seq[array[2, string]] = 
@@ -167,6 +178,19 @@ proc filterIsMatching*(tekst, searchtermst: string, testingbo: bool = false, ite
       echo "No match nr. " & itemnumberst
       result = "no"
 
+
+proc countIsFactorOf*(countit, factorit: int): bool = 
+
+  #[
+    Use for intermittent messages like:
+    if count is factor of 100:
+      echo count
+  ]#
+
+  if (countit mod factorit) == 0:
+    result = true
+  else:
+    result = false
 
 
 

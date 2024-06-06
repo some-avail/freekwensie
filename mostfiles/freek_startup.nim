@@ -1,7 +1,7 @@
 
 
 #[ Sample-project "controls" to learn how to use jester, moustachu and
-g_html_json (html-elements generated from a json-definition-file).
+g_json2html (html-elements generated from a json-definition-file).
 
 Beware of the fact  that there are two kinds of variables:
 -moustachu-variables in the html-code, in which the generated html-controls are 
@@ -39,16 +39,14 @@ import db_connector/db_sqlite
 import strutils, math
 import nimclipboard/libclipboard
 import freek_loadjson, freek_logic
-import g_database, g_db2json, g_json_plus
-import g_mine, g_options, g_cookie, g_disk2nim
-# from g_html_json import nil
-import g_html_json
-import g_tools
+import jolibs/generic/[g_options, g_disk2nim, g_database, g_db2json, g_json_plus, g_mine, g_cookie, g_tools, g_json2html]
+
+
 #import g_templates, os
 
 
 const 
-  versionfl:float = 0.825
+  versionfl:float = 0.828
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -56,9 +54,11 @@ const
   appnamesuffikst = " using word-frequencies"
   # Make sure to get/show all elements that you are referring to, 
   # or crashes may occur
-  showelems = g_html_json.showEntryFilterRadio
+  showelems = g_json2html.showEntryFilterRadio
 
   #firstelems_pathst = @["all web-pages", "first web-page", "web-elements fp"]
+
+
 
 #[ 
   Below solution:
@@ -128,15 +128,15 @@ routes:
 
     innervarob["project_prefix"] = project_prefikst  
 
-    innervarob["sel_depth"] = g_html_json.setDropDown(initialjnob, "sel_parsing_depth", "1", 1)
-    innervarob["sel_number_results"] = g_html_json.setDropDown(initialjnob, "sel_number_results", 
+    innervarob["sel_depth"] = setDropDown(initialjnob, "sel_parsing_depth", "1", 1)
+    innervarob["sel_number_results"] = setDropDown(initialjnob, "sel_number_results", 
                                                                   "10", 1)
 
-    innervarob["check_show"] = g_html_json.setCheckBoxSet(initialjnob, "check_show_pre-results", 
+    innervarob["check_show"] = setCheckBoxSet(initialjnob, "check_show_pre-results", 
                                                     @["default"])
     innervarob["set_nr"] = "1"
 
-    innervarob["sel_alt_freqs"] = g_html_json.setDropDown(initialjnob, "sel_alt_freqs", "0", 1)
+    innervarob["sel_alt_freqs"] = setDropDown(initialjnob, "sel_alt_freqs", "0", 1)
     # innervarob["pasted_link"] = readOptionFromFile("pastebox-default", optValue)
     innervarob["pasted_link"] = setDatalist(initialjnob, "pasted_link", readOptionFromFile("pastebox-default", optValue), "")
 
@@ -144,9 +144,9 @@ routes:
     innervarob["dali_expert_end"] = setDatalist(initialjnob, "dali_expert_end", "", "")
 
 
-    innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(initialjnob, "check_globfreqlist", @["default"], true)
-    innervarob["check_filter_results"] = g_html_json.setCheckBoxSet(initialjnob, "check_filter_results", @["default"], true)
-    innervarob["sel_noise_words"] = g_html_json.setDropDown(initialjnob, "sel_noise_words", 
+    innervarob["check_globfreqlist"] = setCheckBoxSet(initialjnob, "check_globfreqlist", @["default"], true)
+    innervarob["check_filter_results"] = setCheckBoxSet(initialjnob, "check_filter_results", @["default"], true)
+    innervarob["sel_noise_words"] = setDropDown(initialjnob, "sel_noise_words", 
                                               "noise_words_english_generic.dat", 10)
 
     resp showPage(innervarob, outervarob)
@@ -221,13 +221,13 @@ routes:
 
     # ==========non-standard code starting here===========
 
-    innervarob["sel_depth"] = g_html_json.setDropDown(gui_jnob, "sel_parsing_depth", 
+    innervarob["sel_depth"] = setDropDown(gui_jnob, "sel_parsing_depth", 
                                                         @"sel_parsing_depth", 1)
 
-    innervarob["sel_number_results"] = g_html_json.setDropDown(gui_jnob, "sel_number_results", 
+    innervarob["sel_number_results"] = setDropDown(gui_jnob, "sel_number_results", 
                                                         @"sel_number_results", 1)
 
-    innervarob["check_show"] = g_html_json.setCheckBoxSet(gui_jnob, "check_show_pre-results", 
+    innervarob["check_show"] = setCheckBoxSet(gui_jnob, "check_show_pre-results", 
                                                     @[@"chkshow_preresults"])
 
     # innervarob["pasted_link"] = @"pasted_link"
@@ -235,19 +235,19 @@ routes:
 
     innervarob["statustext"] = "..."
     innervarob["set_nr"] = @"set_nr"
-    innervarob["sel_alt_freqs"] = g_html_json.setDropDown(gui_jnob, "sel_alt_freqs", @"sel_alt_freqs", 1)
+    innervarob["sel_alt_freqs"] = setDropDown(gui_jnob, "sel_alt_freqs", @"sel_alt_freqs", 1)
 
     innervarob["dali_expert_start"] = setDatalist(gui_jnob, "dali_expert_start", replace(@"dali_expert_start", "\"","&quot;"), "")
     innervarob["dali_expert_end"] = setDatalist(gui_jnob, "dali_expert_end", replace(@"dali_expert_end", "\"","&quot;"), "")
 
     innervarob["seekbox"] = @"seekbox"
-    innervarob["check_globfreqlist"] = g_html_json.setCheckBoxSet(gui_jnob, "check_globfreqlist", 
+    innervarob["check_globfreqlist"] = setCheckBoxSet(gui_jnob, "check_globfreqlist", 
                                                     @[@"chkCalcGlobFreqs"], true)
-    innervarob["check_filter_results"] = g_html_json.setCheckBoxSet(gui_jnob, "check_filter_results", 
+    innervarob["check_filter_results"] = setCheckBoxSet(gui_jnob, "check_filter_results", 
                                                     @[@"chkFilterResults"], true)
 
 
-    innervarob["sel_noise_words"] = g_html_json.setDropDown(gui_jnob, "sel_noise_words", 
+    innervarob["sel_noise_words"] = setDropDown(gui_jnob, "sel_noise_words", 
                                                               @"sel_noise_words", 10)
 
     innervarob["include_in_lnx"] = @"includable"
@@ -276,6 +276,8 @@ routes:
       echo "\p-----------------------------------------------------"
       echo "Downloading website for link-retrieval: " & weblinkst      
       sitest = getWebSite(weblinkst)
+      echo "Site downloaded."
+      echo "Preparing..."
       parent_titlest = getTitleFromWebsite2(weblinkst)
       outervarob["pagetitle"] = appnamebriefst & "_LNX_" & parent_titlest & "  -- " & appnamenormalst
       includesubsq = split(@"includable", ",,")
@@ -469,10 +471,10 @@ routes:
 
     innervarob["project_prefix"] = project_prefikst  
 
-    innervarob["sel_noise_sources"] = g_html_json.setDropDown(initialjnob, "sel_noise_sources", 
+    innervarob["sel_noise_sources"] = setDropDown(initialjnob, "sel_noise_sources", 
                                               "", 5)
 
-    innervarob["sel_noise_words"] = g_html_json.setDropDown(initialjnob, "sel_noise_words", 
+    innervarob["sel_noise_words"] = setDropDown(initialjnob, "sel_noise_words", 
                                               "", 5)
 
     innervarob["info_update"] = """Pre-warning: generation will overwrite current words-file; 
@@ -534,10 +536,10 @@ routes:
     innervarob["project_prefix"] = project_prefikst  
 
     # ==========non-standard code starting here===========
-    innervarob["sel_noise_sources"] = g_html_json.setDropDown(gui_jnob, "sel_noise_sources", 
+    innervarob["sel_noise_sources"] = setDropDown(gui_jnob, "sel_noise_sources", 
                                                               @"sel_noise_sources", 5)
 
-    innervarob["sel_noise_words"] = g_html_json.setDropDown(gui_jnob, "sel_noise_words", 
+    innervarob["sel_noise_words"] = setDropDown(gui_jnob, "sel_noise_words", 
                                                               @"sel_noise_words", 5)
 
     innervarob["fraction"] = @"fraction"
@@ -610,10 +612,10 @@ routes:
     outervarob["project_prefix"] = project_prefikst
 
     innervarob["project_prefix"] = project_prefikst  
-    #innervarob["dropdown1"] = g_html_json.setDropDown(initialjnob, "dropdownname_01", "", 1)
-    innervarob["dropdown1"] = g_html_json.setDropDown(initialjnob, "All_tables", "", 1)
+    #innervarob["dropdown1"] = setDropDown(initialjnob, "dropdownname_01", "", 1)
+    innervarob["dropdown1"] = setDropDown(initialjnob, "All_tables", "", 1)
 
-    innervarob["table01"] = g_html_json.setTableBasic(initialjnob, "table_01")
+    innervarob["table01"] = setTableBasic(initialjnob, "table_01")
 
     resp showPage(innervarob, outervarob, "02")
 
@@ -671,7 +673,7 @@ routes:
     innervarob["linkcolor"] = "red"
 
     #echo gui_jnob
-    innervarob["dropdown1"] = g_html_json.setDropDown(gui_jnob, "All_tables", 
+    innervarob["dropdown1"] = setDropDown(gui_jnob, "All_tables", 
                                                           @"All_tables", 1)
 
     #righttekst = "The value of dropdownname_01 = " & @"dropdownname_01"
@@ -758,23 +760,23 @@ routes:
     #echo @"radiorecord"
     if @"radiorecord" == "":
       if not tablechangedbo:
-        innervarob["table01"] = g_html_json.setTableDbOpt(gui_jnob, @"All_tables", 
+        innervarob["table01"] = setTableDbOpt(gui_jnob, @"All_tables", 
                                                          showelems, filtersq = filtervaluesq)
       else:
-        innervarob["table01"] = g_html_json.setTableDbOpt(gui_jnob, @"All_tables", showelems)
+        innervarob["table01"] = setTableDbOpt(gui_jnob, @"All_tables", showelems)
     else:
       if not tablechangedbo:
         recordsq = readFromParams(@"All_tables", @[], compString, @[[id_fieldst, @"radiorecord"]])
         #echo recordsq
         if len(recordsq) > 0:
           if len(recordsq[0]) > 0:    # the record exist?
-            innervarob["table01"] = g_html_json.setTableDbOpt(gui_jnob, @"All_tables", showelems,
+            innervarob["table01"] = setTableDbOpt(gui_jnob, @"All_tables", showelems,
                                     @"radiorecord" , recordsq[0], filtervaluesq)
         else:
-          innervarob["table01"] = g_html_json.setTableDbOpt(gui_jnob, @"All_tables", showelems, 
+          innervarob["table01"] = setTableDbOpt(gui_jnob, @"All_tables", showelems, 
                                                               filtersq = filtervaluesq)
       else:
-        innervarob["table01"] = g_html_json.setTableDbOpt(gui_jnob, @"All_tables", showelems)
+        innervarob["table01"] = setTableDbOpt(gui_jnob, @"All_tables", showelems)
 
 
 
@@ -809,7 +811,7 @@ routes:
         graftJObjectToTree(@"All_tables", firstelems_pathsq, gui_jnob, 
                              createHtmlTableNodeFromDB(@"All_tables", compSub, filtersq))
 
-        innervarob["table01"] = g_html_json.setTableDbOpt(gui_jnob, @"All_tables", showelems, 
+        innervarob["table01"] = setTableDbOpt(gui_jnob, @"All_tables", showelems, 
                                                           filtersq = filtervaluesq)
 
 
@@ -831,7 +833,7 @@ routes:
         # requery - deletion gone well?
         graftJObjectToTree(@"All_tables", firstelems_pathsq, gui_jnob, 
                              createHtmlTableNodeFromDB(@"All_tables", compSub, filtersq))
-        innervarob["table01"] = g_html_json.setTableDbOpt(gui_jnob, @"All_tables", showelems, 
+        innervarob["table01"] = setTableDbOpt(gui_jnob, @"All_tables", showelems, 
                                                             filtersq = filtervaluesq)
       else:
         innervarob["statustext"] = "Only records with ID-field can be deleted.."
