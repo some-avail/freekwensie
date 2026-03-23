@@ -195,6 +195,42 @@ proc countIsFactorOf*(countit, factorit: int): bool =
 
 
 
+proc concatenateFiles*(filelisq: seq[string], newfilepathst: string) = 
+
+  #[
+    Create a new file with the contents from all the files in filelisq
+  ]#
+
+  var 
+    curfilest, allfilest: string
+    fileob, newfileob: File
+
+  echo $filelisq.len, " files found to concatenate.\p"
+
+  # preclear the file
+  if open(newfileob, newfilepathst, fmWrite):
+    newfileob.close()
+
+  # open the new file for appending
+  if open(newfileob, newfilepathst, fmAppend):
+
+    for filepathst in filelisq:
+      if open(fileob, filepathst, fmRead):
+        echo "...concatenating: " & filepathst
+        curfilest = fileob.readAll()
+        newfileob.write(curfilest)
+        fileob.close()
+      else:
+        echo filepathst, " could not be found!"
+    echo "\pWritten to: " & newfilepathst
+    newfileob.close()
+
+  else:
+    echo newfilepathst,  " could not be opened!"
+
+
+
+
 when isMainModule:
 
   #echo split2("do Select after this", "SELECT")
@@ -210,9 +246,13 @@ when isMainModule:
 
  #echo zipTwoSeqsToOne(@["1","2","3"], @["a","b","c"])
 
- var 
-  tekst: string = "appel en een peer"
-  searchtermst: string = "banaan n citroen"
+  if false:
+     var 
+      tekst: string = "appel en een peer"
+      searchtermst: string = "banaan n citroen"
 
- echo filterIsMatching(tekst, searchtermst)
+     echo filterIsMatching(tekst, searchtermst)
+
+  if true:
+    concatenateFiles(@["test01.nim","test02.nim"], "testsamen.nim")
 

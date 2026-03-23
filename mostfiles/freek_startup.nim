@@ -31,7 +31,13 @@ ADAP HIS
 
 ADAP NOW
 
+ADAP FUT
+-clean global vars at certain intervals???
+
+
+
 ]#
+
 
 
 import jester, moustachu, times, json, tables
@@ -46,7 +52,7 @@ import jolibs/generic/[g_options, g_disk2nim, g_database, g_db2json, g_json_plus
 
 
 const 
-  versionfl:float = 0.828
+  versionfl:float = 0.8281
   project_prefikst* = "freek"
   appnamebriefst = "FK"
   appnamenormalst = "Freekwensie"
@@ -63,14 +69,18 @@ const
 #[ 
   Below solution:
   - is temporary
-  - is multi-user-enabled
-  - but provides no garbage-collection
+  - has global vars and is thus not multi-threadable
+  - globals can be moved to / retrieved from disk
+    - create a module diskvars to move global vars to
  ]#
+
 
 var
   datasqta = initTable[string, seq[array[5, string]]]()
   globwordsqta = initTable[string, seq[string]]()
-  portnumberit: int = parseInt(readOptionFromFile("port-number", optValue))
+
+
+let portnumberit: int = parseInt(readOptionFromFile("port-number", optValue))
 
 
 settings:
@@ -130,7 +140,7 @@ routes:
 
     innervarob["sel_depth"] = setDropDown(initialjnob, "sel_parsing_depth", "1", 1)
     innervarob["sel_number_results"] = setDropDown(initialjnob, "sel_number_results", 
-                                                                  "10", 1)
+                                                                  "20", 1)
 
     innervarob["check_show"] = setCheckBoxSet(initialjnob, "check_show_pre-results", 
                                                     @["default"])
@@ -264,12 +274,6 @@ routes:
     if @"curaction" == "retrieving..":
       # (re)set the dataseq which will hold the mined weblinks for the specific tabID
 
-      # if datasqta.hasKey(tabidst):
-      #   datasqta[tabidst] = @[]
-      # else:
-      #   datasqta.add(tabidst, @[])
-
-      # Above construct not needed anymore
       datasqta[tabidst] = @[]
 
       weblinkst = @"pasted_link" & createSearchString(@"seekbox")
@@ -368,7 +372,7 @@ routes:
                 extra_list = getHtmlHeaders(sitest, docHtml, maxheaderitemsit)
 
               if extra_list.len > 0:
-                resultst &= "<td id=\"extra_col_prof_table\" rowspan=\"5\">" & extra_list & "</td>\p"                
+                resultst &= "<td id=\"extra_col_prof_table\" rowspan=\"5\">" & extra_list & "</td>\p"
 
               resultst &= "<tr>\p"
               resultst &= "<td colspan=\"3\"><a href=\"" & item[2] & "\" target=\"" & targetwindowst & "\">" & item[2] & "</a></td>\p"
@@ -863,3 +867,9 @@ routes:
 
   get "/hello":
     resp "Hello world"
+
+
+
+proc endOfFileDummyProc() =
+  discard()
+

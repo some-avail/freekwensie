@@ -1,9 +1,9 @@
 import std/[times, strutils]
 
-var versionfl: float = 0.11
+var versionfl: float = 0.13
 
 
-var wispbo = true
+var wispbo* = true
 
 
 
@@ -24,6 +24,29 @@ template wisp_old*(wordsq: varargs[string, `$`]) =
       procnamest = $tob[tob.len - 1].procname
       echo "==>  ", modulest, "_", procnamest, "  echos: ",  wordsq
 
+
+
+template getTrace*(wordsq: varargs[string, `$`]) =
+  # works only for non-release-compilation; thats ok
+  var
+    filepathst, filenamest, modulest, procnamest: string
+    pathsq: seq[string]
+    lineit: int
+
+  if wispbo:
+    let tob = getStackTraceEntries()      # a proc from the system-module
+
+    if tob.len > 0:       # needed for release-compilation
+      echo "counting ", tob.len, " ", type(itemob)
+      for itemob in tob:
+        #echo itemob
+
+        filepathst = $itemob.filename
+        pathsq = filepathst.split("/")
+        filenamest = pathsq[pathsq.len - 1]
+        procnamest = $itemob.procname
+        lineit = itemob.line
+        echo filenamest.alignLeft(25) & ($lineit).alignLeft(10) & procnamest.alignLeft(25)
 
 
 
@@ -53,27 +76,28 @@ template wisp*(wordsq: varargs[string, `$`]) =
         hprocnamest = $tob[tob.len - 2].procname
 
       messagest = wordsq.join(" ")
-      echo ""
+      #echo ""
       echo "==>  ", hprocnamest, "---", procnamest, "  echos:   ",  messagest
 
 
 
 
-template withFile*(f, fn, mode, actions: untyped): untyped =
-  var f: File
-  if open(f, fn, mode):
+template withFile*(fileob, filenamest, mode, actions: untyped): untyped =
+  var fileob: File
+  if open(fileob, filenamest, mode):
     try:
       actions
     finally:
-      close(f)
+      close(fileob)
   else:
-    echo("cannot open: " & fn)
+    echo("withFile cannot open: " & filenamest)
 
 
 
-template withFileAdvanced*(f, fn, mode, actions: untyped): untyped =
-  var f: File
-  if open(f, fn, mode):
+template withFileAdvanced*(fileob, filenamest, mode, actions: untyped): untyped =
+  
+  var fileob: File
+  if open(fileob, filenamest, mode):
     try:
       actions
 
@@ -82,9 +106,9 @@ template withFileAdvanced*(f, fn, mode, actions: untyped): untyped =
       echo "\p******* Unanticipated error ******* \p" 
       echo repr(errob) & "\p****End exception****\p"
     finally:
-      close(f)
+      close(fileob)
   else:
-    echo("Cannot open: " & fn)
+    echo("withFileAdvanced cannot open: " & filenamest)
 
 
 

@@ -617,12 +617,14 @@ proc getInnerText3_old*(tekst: string, maxwordlengthit: int = -1,
 
 proc getInnerText2*(tekst: string, maxitemcountit: int = -1, 
                             maxwordlengthit: int = -1): string =
-
   #[ 
-  Generic text-extraction of html-code.
+  Generic text-extraction of html-code that is placed in tekst.
   Based on getDataSeqDirty(tekst, ">", "<")
 
   params -1 means: no limits
+
+  Meant to extract the whole website when using maxitemcountit = -1
+  (in freekwensie used for filtering)
 
   ADAP FUT
   -better clean up of page-breaks etc.
@@ -651,7 +653,6 @@ proc getInnerText2*(tekst: string, maxitemcountit: int = -1,
   newtekst = removeDuplicateStrings(newtekst, @[" ", "\n", "\t","\c", "\c\n" ,"\n ", "\t\n", "\t\c", "\t \n"])
 
   result = newtekst
-
 
 
 
